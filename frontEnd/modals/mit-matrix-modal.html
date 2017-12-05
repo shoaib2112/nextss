@@ -1,0 +1,421 @@
+﻿<!--<!-- **MIT MODAL** -->
+<div id="mitModal" c
+la
+<div id="mitModal" class="modal fade" tabindex="-1" role="dialog" style="overflow:hidden;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h5 class="modal-title left" style="margin-right:20px;">
+          MIT Chart
+        </h5>
+
+        <label for="malist" style="width:auto;">
+          Management Area:
+          <select class="malist" id="MITmalist" form="mas" ng-change="maSelect()" ng-model="MA">
+            <option ng-repeat="ma in mas | orderBy:ma.name" value="{{ma}}">{{ma}}</option>
+          </select>
+        </label>
+        <label for="sublist">
+          Substation:
+          <select class="sublist" id="MITsublist" form="MA" ng-change="subSelect()" ng-model="SUB">
+            <option ng-repeat="sub in subs | orderBy:sub.sub |filter:{ma:MA} " value="{{sub.sub}}">{{sub.sub}}</option>
+          </select>
+        </label>
+        <label for="feederlist">
+          Feeder:
+          <select class="feederlist" id="MITfeederlist" form="SUB" ng-change="feederSelect()" ng-model="feeder">
+            <option ng-repeat="feeder in chosenFeeders | orderBy:feeder" value="{{feeder}}">{{feeder}}</option>
+          </select>
+
+        </label>
+
+        <span>NOTE: NOT CURRENTLY FUNCTIONAL (defaults to current, but does not change within here)</span>
+
+        <!--<br />
+                                        <div>
+                                                !<span ng-repeat="y in areas |filter:{ma:'NA'} ">
+                {{y.ma}}
+        </span>
+                                                                                        <br />
+                                                ||?<span ng-repeat="tsub in mapCtrl.areas | filter:{ma:'NA'}"> {{tsub.subs.sub}} |</span>
+                                                                                        <br/>
+                                                <label for="testmodel" style="width:auto;">
+                                                        TEST MA: <select class="" id="testlist" ng-model="MAT">
+                                                                <option ng-repeat="area in areas | orderBy:'ma'" value="{{area.ma}}">{{area.ma}}</option>
+                                                        </select>
+                                                </label>
+                                                <label for="testmodel" style="width:auto;">
+                                                        TEST sub: <select class="" id="testlist" ng-model="subt" ng-disabled="!MAT">
+                                                                <option ng-repeat="tsub in areas.subs | orderBy:'sub'" value="{{tsub.sub}}">{{tsub.sub}}</option>
+                                                        </select>
+                                                </label>
+
+                                                <label for="testmodel" style="width:auto;">
+                                                        TEST Feeder: <select class="" id="testlist" ng-disabled="!subt" ng-model="feedst">
+                                                                <option ng-repeat="Tfdr in areas.mat.subs.feeders | orderBy:'feeders'" value="{{Tfdr}}">{{Tfdr}}</option>
+
+                                                        </select>
+                                                </label>
+                                        </div>-->
+        <!-- sub in metadata | filter:{sub:subt}-->
+
+      </div>
+      <div class="modal-body" style="overflow-y:hidden">
+        <ul class="nav nav-tabs" id="k">
+          <li class="active">
+            <a href="#mitTable" data-toggle="tab" ng-click="showMitBtns=true"><span class="glyphicon stats"> </span>&nbsp;MIT Matrix</a>
+          </li>
+          <li>
+            <a href="#mitInvReport" data-toggle="tab" ng-click="showMitBtns=false"><span class="glyphicon glyphicon-dashboard"> </span>&nbsp;Investigation Report</a>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="mitContent">
+          <div class="tab-pane fade  active in" id="mitTable" active="mitTable">
+            <div class=" panel panel-primary" style="overflow-y:auto">
+              <div class="panel-heading">
+
+                <label class='checkbox-inline bg-lilac' style="width: 130px;"><input type='checkbox' ng-model='mitReliStats' value='' aria-label='Toggle ngShow'>Reliability Stats</label>
+                <label class='checkbox-inline bg-blue'><input type='checkbox' ng-model='mitProt' value='' ng-checked="true" aria-label='Toggle ngShow' ng-init="mitProt=true">Protection</label>
+                <!--  try to make protection on by default, without off setting checkbox -->
+                <label class='checkbox-inline nee-green'><input type='checkbox' ng-model='mitVeg' value='' aria-label='Toggle ngShow'>Vegetation</label>
+                <label class='checkbox-inline bg-blue-violet'><input type='checkbox' ng-model='mitSmartGrid' value='' aria-label='Toggle ngShow'>SmartGrid</label>
+                <label class='checkbox-inline bg-drk-lilac' style="width: 150px;"><input type='checkbox' ng-model='mitReliability' value='' aria-label='Toggle ngShow'>Reliability Programs</label>
+                <label class='checkbox-inline fpl-grey'><input type='checkbox' ng-model='mitGen' value='' aria-label='Toggle ngShow'>General</label>
+
+              </div>
+              <!--<div class="panel-heading">mit modal</div>-->
+              <div class="panel-body" style="overflow:auto;">
+
+                <table class="table table-striped">
+
+                  <thead>
+                    <tr>
+                      <th>MA</th>
+                      <th>Substation</th>
+                      <th>Feeder</th>
+                      <th>M Today</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>MYTD</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>M 12 MOE</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>Int FDR YTD</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>Int  FDR 12 MOE</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>Int Lat YTD</th>
+                      <th ng-show='mitReliStats' class='bg-lilac'>Int Lat 12 MOE</th>
+                      <th ng-show='mitProt' class='bg-blue'>Relay</th>
+                      <th ng-show='mitProt' class='bg-blue'>GI/GX</th>
+                      <th ng-show='mitProt' class='bg-blue'>GI/GX Change</th>
+                      <th ng-show='mitProt' class='bg-blue'>Toggle</th>
+                      <th ng-show='mitProt' class='bg-blue'>FIS</th>
+                      <th ng-show='mitVeg' class='nee-green'>Trim FDR</th>
+                      <th ng-show='mitVeg' class='nee-green'>Trim LAT</th>
+                      <th ng-show='mitSmartGrid' class='bg-blue-violet'>FCI’s</th>
+                      <th ng-show='mitSmartGrid' class='bg-blue-violet'>cFCIs</th>
+                      <th ng-show='mitSmartGrid' class='bg-blue-violet'>AFS</th>
+                      <th ng-show='mitSmartGrid' class='bg-blue-violet'>ALS</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>Harden Date</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>Thermo Date</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>Visual insp Date</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>OHLI Insp</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>CM PF</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>Pole Insp</th>
+                      <th ng-show='mitReliability' class='bg-drk-lilac'>PSC cust </th>
+                      <th ng-show='mitGen' class='fpl-grey'>Oh FDR miles</th>
+                      <th ng-show='mitGen' class='fpl-grey'>OH Lat miles</th>
+                      <th ng-show='mitGen' class='fpl-grey'>Cust</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- NG Repeat here <tr ng-hide="MYTD==0 || MYTD==null">-->
+                    <tr>
+                      <td>CF</td>
+                      <td>GENERAL_ELECTRIC</td>
+                      <td>101538</td>
+                      <td>4</td>
+                      <td ng-show='mitReliStats'>14</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitReliStats'>5</td>
+                      <td ng-show='mitReliStats'>10</td>
+                      <td ng-show='mitReliStats'>8</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitProt'>12SEL2511</td>
+                      <td ng-show='mitProt'>E</td>
+                      <td ng-show='mitProt'>11/25/2015</td>
+                      <td ng-show='mitProt'>Y</td>
+                      <td ng-show='mitProt'>N</td>
+                      <td ng-show='mitVeg'>11/25/2015</td>
+                      <td ng-show='mitVeg'>11/25/2016</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>9</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>yes</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>50</td>
+                      <td ng-show='mitGen'>42</td>
+                      <td ng-show='mitGen'>65</td>
+                      <td ng-show='mitGen'>2589</td>
+                    </tr>
+
+                    <tr>
+                      <td>CF</td>
+                      <td>GENERAL_ELECTRIC</td>
+                      <td>101538</td>
+                      <td>4</td>
+                      <td ng-show='mitReliStats'>14</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitReliStats'>5</td>
+                      <td ng-show='mitReliStats'>10</td>
+                      <td ng-show='mitReliStats'>8</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitProt'>12SEL2511</td>
+                      <td ng-show='mitProt'>E</td>
+                      <td ng-show='mitProt'>11/25/2015</td>
+                      <td ng-show='mitProt'>Y</td>
+                      <td ng-show='mitProt'>N</td>
+                      <td ng-show='mitVeg'>11/25/2015</td>
+                      <td ng-show='mitVeg'>11/25/2016</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>9</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>yes</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>50</td>
+                      <td ng-show='mitGen'>42</td>
+                      <td ng-show='mitGen'>65</td>
+                      <td ng-show='mitGen'>2589</td>
+                    </tr>
+                    <tr>
+                      <td>CF</td>
+                      <td>GENERAL_ELECTRIC</td>
+                      <td>101538</td>
+                      <td>4</td>
+                      <td ng-show='mitReliStats'>14</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitReliStats'>5</td>
+                      <td ng-show='mitReliStats'>10</td>
+                      <td ng-show='mitReliStats'>8</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitProt'>12SEL2511</td>
+                      <td ng-show='mitProt'>E</td>
+                      <td ng-show='mitProt'>11/25/2015</td>
+                      <td ng-show='mitProt'>Y</td>
+                      <td ng-show='mitProt'>N</td>
+                      <td ng-show='mitVeg'>11/25/2015</td>
+                      <td ng-show='mitVeg'>11/25/2016</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>9</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>yes</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>50</td>
+                      <td ng-show='mitGen'>42</td>
+                      <td ng-show='mitGen'>65</td>
+                      <td ng-show='mitGen'>2589</td>
+                    </tr>
+                    <tr>
+                      <td>CF</td>
+                      <td>GENERAL_ELECTRIC</td>
+                      <td>101538</td>
+                      <td>4</td>
+                      <td ng-show='mitReliStats'>14</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitReliStats'>5</td>
+                      <td ng-show='mitReliStats'>10</td>
+                      <td ng-show='mitReliStats'>8</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitProt'>12SEL2511</td>
+                      <td ng-show='mitProt'>E</td>
+                      <td ng-show='mitProt'>11/25/2015</td>
+                      <td ng-show='mitProt'>Y</td>
+                      <td ng-show='mitProt'>N</td>
+                      <td ng-show='mitVeg'>11/25/2015</td>
+                      <td ng-show='mitVeg'>11/25/2016</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>9</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>yes</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>50</td>
+                      <td ng-show='mitGen'>42</td>
+                      <td ng-show='mitGen'>65</td>
+                      <td ng-show='mitGen'>2589</td>
+                    </tr>
+                    <tr>
+                      <td>CF</td>
+                      <td>GENERAL_ELECTRIC</td>
+                      <td>101538</td>
+                      <td>4</td>
+                      <td ng-show='mitReliStats'>14</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitReliStats'>5</td>
+                      <td ng-show='mitReliStats'>10</td>
+                      <td ng-show='mitReliStats'>8</td>
+                      <td ng-show='mitReliStats'>20</td>
+                      <td ng-show='mitProt'>12SEL2511</td>
+                      <td ng-show='mitProt'>E</td>
+                      <td ng-show='mitProt'>11/25/2015</td>
+                      <td ng-show='mitProt'>Y</td>
+                      <td ng-show='mitProt'>N</td>
+                      <td ng-show='mitVeg'>11/25/2015</td>
+                      <td ng-show='mitVeg'>11/25/2016</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>9</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitSmartGrid'>Y</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>11/25/2016</td>
+                      <td ng-show='mitReliability'>yes</td>
+                      <td ng-show='mitReliability'>11/25/2015</td>
+                      <td ng-show='mitReliability'>50</td>
+                      <td ng-show='mitGen'>42</td>
+                      <td ng-show='mitGen'>65</td>
+                      <td ng-show='mitGen'>2589</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- close body -->
+
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="mitInvReport">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                Investigation Report for Feeder# {{feeder}}
+              </div>
+              <div class="panel-body" style="overflow: auto; max-height: 380px;">
+                <!--<span>
+                        Need to layout Table: based on <a href="http://dpdcapps/DPDC/MomentaryMatrixDetailed.jsp">Momentary research matrix</a>.
+                        Requires Feeder Selction
+                </span>-->
+                <div>
+                  <table class="table table-condensed">
+                    <tbody>
+                      <tr>
+                        <th>Feeder N YTD</th>
+                        <th>Feeder N 12MOE</th>
+                        <th>Lateral N YTD</th>
+                        <th>Lateral N 12MOE</th>
+                        <th>CMI YTD</th>
+                        <th>CMI 12MOE</th>
+                        <th>Momentaries YTD</th>
+                        <th>Momentaries 12MOE</th>
+                      </tr>
+                      <tr class="teal1">
+                        <td>9</td>
+                        <td>10</td>
+                        <td>10</td>
+                        <td>10</td>
+                        <td>217087</td>
+                        <td>242412</td>
+                        <td>0</td>
+                        <td>0</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <table class="table table-striped table-condensed">
+                  <!-- ADD NG HIDE<table ng-hide="MYTD=0 || Mtotal==null"> -->
+                  <!-- <div ng-show="MYTD=0 || Mtotal==null">
+                      No Momentaries found for this feeder this year
+                  </div>-->
+                  <thead>
+
+                    <tr>
+                      <th>Date</th>
+                      <th>SCADA Time</th>
+                      <th>Map Gen'd?</th>
+                      <th>Inv Status</th>
+                      <th class='bg-blue'>Comments</th>
+                      <th class='bg-blue'>TLN - Cause Location</th>
+                      <th class='bg-blue'>Cause</th><!-- Identified or Unidentified  -->
+                      <th class='nee-green'>TCMS Tkt</th>
+                      <th class='nee-green'>TCMS Cause</th>
+                      <th class='nee-green'>Tkt Type</th>
+                      <th class='bg-drk-lilac'>Rain</th>
+                      <th class='bg-drk-lilac'>Lightning Match</th>
+                      <th class='bg-drk-lilac'>Wind</th>
+                      <th class='bg-drk-lilac'>Gusts</th>
+                      <th>Active WR</th>
+                      <th>WR Status</th>
+
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- NG Repeat here <tr ng-hide="Mtotal=0 || Mtotal==null">-->
+                    <tr>
+                      <td>11/6/2015</td><!-- add in | date:'shortDate'-->
+                      <td>11:05:00 AM</td> <!-- add in |date:'mediumTime'-->
+                      <td>
+                        <span ng-show="mapGen=='no'">{{mapGen}}</span>
+                        <span>Yes <span class="glyphicon glyphicon-globe"></span></span> <!--add to span with "yes" ng-show="mapGen=='yes'"  -->
+                      </td>
+                      <td><span class="glyphicon glyphicon-edit" ng-show="!TLNCause" ng-click=""> <input class="table-input hide" type="text" placeholder="Unidentified" style="width:75%" /></span><!-- Identified or Unidentified  -->
+                      <td><span class="glyphicon glyphicon-edit" ng-show="!TLNCause" ng-click=""> <input class="table-input hide" type="text" placeholder="enter comments" /></span>{comments}</td>
+                      <td><span class="glyphicon glyphicon-edit" ng-show="!TLNCause" ng-click=""> <input class="table-input hide" type="text" placeholder="" /></span>{7777777}</td>
+                      <td><span class="glyphicon glyphicon-edit" ng-show="!TLNCause" ng-click=""> <input class="table-input hide" type="text" placeholder="Unknown" style="width:70%" /></span>{Y}</td>
+                      <td>888888</td>
+                      <td>LatX</td>
+                      <td>things</td>
+                      <td>data</td>
+                      <td>data</td>
+                      <td>data</td>
+                      <td>data</td>
+                      <td>
+                        <span ng-show="wrNumber">{{wrNumber}}</span>
+                        <span ng-hide="wrNumber"><button class="btn btn-info btn-short">Create WR</button></span>
+                      </td>
+                      <td>status</td>
+
+                    </tr>
+
+
+
+                  </tbody>
+                </table>
+
+              </div>
+              <!-- close body -->
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" ng-csv="" filename="investigation_report_fdr_{{feeder}}.csv" csv-header="[]">Get CSV</button>
+
+          <div class="col-sm-2 right">
+            <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+</div>-->

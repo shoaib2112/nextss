@@ -1,0 +1,47 @@
+<div id="header">
+    <a ui-sref="map"><img src="assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo" /></a>
+    <h3>NEXTgrid</h3>
+    <!--<label for="managementAreaList"> Management Area: </label>-->
+
+    <!--<area-date-investigation-selection></area-date-investigation-selection>-->
+
+    <area-date-selection-header></area-date-selection-header>
+    <div id="btn-bank">
+        <button id="logoutBtn" class="btn btn-default" data-toggle="modal" data-target="#logoutModal" ng-click="logout()">
+            <span class="glyphicon glyphicon-log-out"></span>
+        </button>
+        <!--<button id="keybt1" class="btn btn-success" data-toggle="modal" data-target="#keyModal">-->
+            <!--<span class="glyphicon glyphicon-info-sign" style="margin-right:5px;"></span>Key-->
+        <!--</button>-->
+        <!--<button id="keybt2" class="btn btn-success" ng-click="openMatrixModal()"  ng-disabled="!controlPanelSelectionData.selectedManagementArea._id || controlPanelSelectionData.selectedManagementArea._id === 'All'">
+        <button id="keybt2" class="btn btn-success" ng-click="openMatrixModal()"  ng-disabled="!controlPanelSelectionData.selectedManagementArea._id || controlPanelSelectionData.selectedManagementArea._id === 'All'">
+            <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>MIT
+        </button>
+
+
+        <div class="left dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Suite
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a ui-sref="map">NEXTgrid</a></li>
+                <li><a href="/other/hvt.html">High Voltage Transformers</a></li>
+                <li><a href="/other/switchingOrders.html">Switching Orders</a></li>
+                <li><a href="/other/monitor.html">Monitor Data</a></li>
+            </ul>
+        </div>-->
+    </div>
+</div>
+
+<div id="wrapper">
+    <div class="container-fluid">
+        <div class="map-container">
+            <!--<div ng-include="'app/components/map/left-sidebar-left.html'" id="sidebar" class="sidebar collapsed"></div>-->
+        <sidebar></sidebar>
+
+
+            <leaflet control="leafletControls" class="row-fluid"></leaflet>
+        </div>
+    </div>
+    <!--<control-panel leaflet-controls="leafletControls"></control-panel>-->
+</div>

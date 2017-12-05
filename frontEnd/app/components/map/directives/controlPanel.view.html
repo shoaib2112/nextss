@@ -1,0 +1,808 @@
+<div class="controlPanel sb-section" ng-class="{closed: isControlPanelOpen}">
+    <div>
+        <uib-accordion close-others="oneAtATime">
+
+            <!--<uib-accordion-group heading="Select Your Area" is-open="selectAreaIsOpen">-->
+                <!--<uib-accordion-heading>-->
+                   <!--<span ng-show="selectAreaIsOpen || controlPanelSelectionData.selectedManagementArea._id === 'All'">Select Your Area</span>-->
+                   <!--<span ng-show="!selectAreaIsOpen && controlPanelSelectionData.selectedManagementArea._id !== 'All' && controlPanelSelectionData.mostSpecificSelectionType === 'ma'">{{controlPanelSelectionData.selectedManagementArea._id}}</span>-->
+                   <!--<span ng-show="!selectAreaIsOpen && controlPanelSelectionData.selectedManagementArea._id !== 'All' && controlPanelSelectionData.mostSpecificSelectionType === 'sc'">{{controlPanelSelectionData.selectedManagementArea._id}} - {{controlPanelSelectionData.selectedServiceCenter._id}}</span>-->
+                   <!--<span ng-show="!selectAreaIsOpen && controlPanelSelectionData.selectedManagementArea._id !== 'All' && controlPanelSelectionData.mostSpecificSelectionType === 'sub'">{{controlPanelSelectionData.selectedManagementArea._id}} - {{controlPanelSelectionData.selectedServiceCenter._id}} - {{controlPanelSelectionData.selectedSubstation._id}}</span>-->
+                   <!--<span ng-show="!selectAreaIsOpen && controlPanelSelectionData.selectedManagementArea._id !== 'All' && controlPanelSelectionData.mostSpecificSelectionType === 'feeder'">{{controlPanelSelectionData.selectedManagementArea._id}} - {{controlPanelSelectionData.selectedServiceCenter._id}} - {{controlPanelSelectionData.selectedSubstation._id}} - {{controlPanelSelectionData.selectedFeeder.name}}</span>-->
+                <!--</uib-accordion-heading>-->
+
+                <!--<div class="form-group" style="width: 49%;display: inline-block;">-->
+                    <!--<label for="managementAreaList" style="width: 100%"> Management Area: </label>-->
+                    <!--<select class="form-control" name="managementAreaList" id="managementAreaList"-->
+                            <!--ng-model="controlPanelSelectionData.selectedManagementArea"-->
+                            <!--ng-options="option as option._id for option in managementAreas | toArray | orderBy: '_id'"-->
+                            <!--ng-change="managementAreaSelected()">-->
+                    <!--</select>-->
+                <!--</div>-->
+
+                <!--<div class="form-group" style="width: 49%;display: inline-block;">-->
+                    <!--<label for="serviceCenterList" style="width: 100%"> Service Center: </label>-->
+                    <!--<select class="form-control" name="serviceCenterList" id="serviceCenterList"-->
+                            <!--ng-options="option._id for option in serviceCentersList | toArray | orderBy: '_id'"-->
+                            <!--ng-model="controlPanelSelectionData.selectedServiceCenter"-->
+                            <!--ng-change="serviceCenterSelected()">-->
+                        <!--<option value="">All</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+
+                <!--<div>-->
+                    <!--<label for="search" style="width: 100%">Search Substation:</label>-->
+                    <!--<input name="search" id="search" type="text" placeholder="Enter The Substation Name" class="form-control"-->
+                           <!--ng-model="searchedSubstation" typeahead-on-select="onSelectSearchSubstation($item)"-->
+                           <!--uib-typeahead="substation._id for substation in managementAreas.all.serviceCenters.all.substations-->
+                   <!--| toArray | filter:$viewValue | limitTo:16">-->
+                    <!--<br />-->
+                <!--</div>-->
+
+                <!--<div class="form-group" style="width: 49%;display: inline-block;">-->
+                    <!--<label for="substationListing"> Substation: </label>-->
+                    <!--<select class="form-control" name="substationListing" id="substationListing"-->
+                            <!--ng-options="option._id for option in substationsList | toArray | orderBy: '_id'"-->
+                            <!--ng-model="controlPanelSelectionData.selectedSubstation" ng-change="substationSelected()">-->
+                        <!--<option value="">Select a Substation</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+
+                <!--<div class="form-group" style="width: 49%;display: inline-block;">-->
+                    <!--<label for="feederListing"> Feeder: </label>-->
+                    <!--<select   class="form-control" name="feederListing" id="feederListing"-->
+                              <!--ng-options="option.name for option in controlPanelSelectionData.selectedSubstation.feeders | toArray | orderBy: 'name'"-->
+                              <!--ng-model="controlPanelSelectionData.selectedFeeder" ng-disabled="!controlPanelSelectionData.selectedSubstation" ng-change="feederSelected()">-->
+                        <!--<option value="">Select a Feeder</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+
+
+            <!--</uib-accordion-group>-->
+
+            <uib-accordion-group heading="Investigation Layers" is-open="true">
+                <!--<span class="col-sm-12" ng-show="controlPanelSelectionData.selectedManagementArea !== managementAreas.all">*Click the icon to open up the calendar*</span>-->
+                <span class="txt-red col-sm-12" ng-show="controlPanelSelectionData.selectedManagementArea === managementAreas.all">*You must select a specific Management Area*</span>
+                <!--<div id="dateSelector" class="row" >-->
+                  <!--<span class="col col-sm-10">-->
+                    <!--&lt;!&ndash;<input id="day" type="text" ng-model="oneDate"  placeholder="{{now|date:'MM/dd/yyyy'}}" />&ndash;&gt;-->
+                      <!--<p class="input-group">-->
+
+                          <!--<input ng-click="isCalendarOpen = false" placeholder="MM-DD-YYYY" ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all"-->
+                                 <!--type="text" class="form-control" uib-datepicker-popup="MM-dd-yyyy"-->
+                                 <!--ng-model="controlPanelSelectionData.selectedCalendarDate" is-open="isCalendarOpen" datepicker-options="dateOptions" ng-required="true"-->
+                                 <!--close-text="Close" alt-input-formats="altInputFormats" ng-change="calendarDaySelected();setStartDateTime()" />-->
+
+                          <!--<span class="input-group-btn">-->
+                            <!--<button ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default"-->
+                                    <!--ng-click="isCalendarOpen = !isCalendarOpen">-->
+                                <!--<i class="glyphicon glyphicon-calendar"></i> From-->
+                            <!--</button>-->
+                          <!--</span>-->
+
+                      <!--</p>-->
+
+                      <!--<p class="input-group">-->
+                          <!--<input ng-click="isCalendarEndOpen = false" placeholder="MM-DD-YYYY" ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all"-->
+                                 <!--type="text" class="form-control" uib-datepicker-popup="MM-dd-yyyy"-->
+                                   <!--ng-model="controlPanelSelectionData.selectedCalendarEndDate" is-open="isCalendarEndOpen" datepicker-options="dateOptions"-->
+                                   <!--close-text="Close" alt-input-formats="altInputFormats" ng-change="calendarDaySelected();setEndDateTime()" />-->
+                          <!--<span class="input-group-btn">-->
+                            <!--<button ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default"-->
+                                    <!--ng-click="isCalendarEndOpen = !isCalendarEndOpen">-->
+                                <!--<i class="glyphicon glyphicon-calendar"></i> To-->
+                            <!--</button>-->
+                          <!--</span>-->
+
+                      <!--</p>-->
+                      <!--&lt;!&ndash;<input id="day" type="text" ng-model="oneDay" placeholder="{{now|date:'MM/dd/yyyy'}}" />&ndash;&gt;-->
+                  <!--</span>-->
+                <!--</div>-->
+                <!--<button class="btn btn-primary" ng-click="initiateEZTasks()">Easy Button</button>-->
+                <div id="layers" class="row" style="margin:10px 0 0 0;" ng-show="true">
+                    <!--<div class="checkbox col col-sm-12" style="margin-bottom: 0">
+                      <input type="checkbox" ng-disabled="!feeder" id="Bus" value="" /><label>Display Bus Level</label><br />
+                    </div>-->
+                    <!-- Use  checkboxes OR buttons to toggle layers on and off (also toggle 'active' class with buttons)-->
+                    <div class="col col-sm-6">
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id || areaFData.selectedManagementArea._id === 'All'" id="cbFaults" ng-model="checkBoxes.isFaultsChecked" ng-change="toggleFaults()"/>
+                            <label ng-click="checkBoxes.isFaultsChecked = !checkBoxes.isFaultsChecked; toggleFaults();" ng-disabled="!areaFData.selectedSubstation._id || areaFData.selectedManagementArea._id === 'All'"
+                                   data-toggle="tooltip" data-placement="right" title="Displays Faults within the selected Date Range">Fault Maps</label>
+                            <br />
+                            <!--<input type="checkbox" ng-disabled="!sub" id="cbFaults" ng-checked="boxes.faultsChecked" value="" /><label>Fault Maps</label><br />-->
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'"
+                                   id="cbLit" ng-model="checkBoxes.isLightningDayChecked" ng-change="toggleLightningDay()"/>
+                            <label ng-click="checkBoxes.isLightningDayChecked = !checkBoxes.isLightningDayChecked; toggleLightningDay()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays Lightning Strikes within the selected Date Range">Lightning Day</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id" id="cbLitHeat" ng-model="checkBoxes.isLightningYTDChecked" ng-change="toggleLightningYTD();" />
+                            <label ng-click="checkBoxes.isLightningYTDChecked = !checkBoxes.isLightningYTDChecked; toggleLightningYTD();"
+                                   data-toggle="tooltip" data-placement="right" title="Displays a Heat Map of All Lightning Strikes YTD">Lightning YTD</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'" id="cbVines" ng-model="checkBoxes.isVinesChecked" ng-change="toggleVines()"/>
+                            <label ng-click="checkBoxes.isVinesChecked = !checkBoxes.isVinesChecked; toggleVines()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays Vine Conditions sent to vines@fpl.com">Vines Emails</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'" id="cbPalms" ng-model="checkBoxes.isPalmsBamboosChecked" ng-change="togglePalmsBamboos()"/>
+                            <label ng-click="checkBoxes.isPalmsBamboosChecked = !checkBoxes.isPalmsBamboosChecked; togglePalmsBamboos()">Palms &amp; Bamboo</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id || areaFData.selectedManagementArea._id === 'All'" id="cbCA" ng-model="checkBoxes.isOpenConditionAssessmentsChecked" ng-change="toggleOpenConditionAssessmentsChecked()"/>
+                            <label ng-click="checkBoxes.isOpenConditionAssessmentsChecked = !checkBoxes.isOpenConditionAssessmentsChecked; toggleOpenConditionAssessmentsChecked()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays Currently Open Condition Assessments">Open Condition Assessment</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'"
+                                   ng-model="checkBoxes.isComplaintsChecked" ng-change="toggleComplaints()"/>
+                            <label ng-click="checkBoxes.isComplaintsChecked = !checkBoxes.isComplaintsChecked; toggleFaults();"
+                                   data-toggle="tooltip" data-placement="right" title="Displays YTD complaints">Complaints Map</label>
+                        </div>
+
+                        <!--<div class="checkbox">
+                          <input type="checkbox" ng-disabled="true" id="cbAFS" value="" /><label>AFS</label><br />
+                        </div>
+                        <!--<div class="checkbox">
+                          <input type="checkbox" ng-disabled="true" id="cbBreakerOps" value="" />
+                          <label>Breaker Operations</label><br />
+                        </div>
+                        <div class="checkbox">
+                          <input type="checkbox" ng-disabled="true" id="cbEcalls" value="" /><label>E-Calls</label><br />
+                        </div>
+                        <div class="checkbox">
+                          <input type="checkbox" ng-disabled="true" id="voltageSags" value="" /><label>Voltage Sags</label><br />
+                        </div>
+                        <div class="checkbox">
+                          <input type="checkbox" ng-disabled="true" id="SubTxBus" value="" /><label>Sub Tx Bus</label><br />
+                        </div>-->
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="false"
+                                   id="cbFCI" ng-model="checkBoxes.isFCIChecked" ng-change="toggleFCIs()" />
+                            <!--"!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'"-->
+                            <label ng-click="checkBoxes.isFCIChecked = !checkBoxes.isFCIChecked; toggleFCIs()">FCI Operations</label>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id" id="cbTT" ng-model="checkBoxes.isTroubleTicketsChecked" ng-change="toggleTroubleTickets()" />
+                            <label ng-click="checkBoxes.isTroubleTicketsChecked = !checkBoxes.isTroubleTicketsChecked; toggleTroubleTickets()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays Trouble Tickets made within the selected Date Range">Trouble Tickets</label>
+                            <br />
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id || areaFData.selectedManagementArea._id === 'All'" id="cbEL" ng-model="checkBoxes.isEquipmentLogChecked" ng-change="toggleEquipmentLog()"/>
+                            <label ng-click="checkBoxes.isEquipmentLogChecked = !checkBoxes.isEquipmentLogChecked; toggleEquipmentLog()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays list of Open Items - no mapping">Open Equipment Log</label>
+                            <br />
+                        </div>
+
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id" id="cbMomOut" ng-model="checkBoxes.isKnownMomentariesFeederOutagesChecked"
+                                   ng-change="toggleKnownMomentariesFeederOutagesChecked()"/>
+                            <label ng-click="checkBoxes.isKnownMomentariesFeederOutagesChecked = !checkBoxes.isKnownMomentariesFeederOutagesChecked; toggleKnownMomentariesFeederOutagesChecked()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays ALL Locations of Known Feeder Outages and YTD Momentaries that occurred">
+                                Known Momentaries &amp; Feeder Outages
+                            </label>
+                            <br />
+                        </div>
+
+                        <div class="checkbox">
+                            <input type="checkbox" ng-disabled="!areaFData.selectedSubstation._id" id="cbALS" ng-model="checkBoxes.isALSChecked" ng-change="toggleALSChecked()"/>
+                            <label ng-click="checkBoxes.isALSChecked = !checkBoxes.isALSChecked; toggleALSChecked()"
+                                   data-toggle="tooltip" data-placement="right" title="Displays ALS's that had event(s) within the selected Date Range">ALS Investigation</label>
+                            <br />
+                        </div>
+
+                    </div>
+
+                    <hr class="clear"/>
+                    <h5>New Investigations</h5>
+                    <div class="col col-sm-6">
+
+                        <div class="checkbox">
+                            <input type="checkbox"  id="cbHvt" ng-model="checkBoxes.isHvtChecked" ng-change="toggleHvtChecked()"/>
+                            <!--ng-disabled="!areaFData.selectedManagementArea._id || areaFData.selectedManagementArea._id === 'All'"-->
+                            <label ng-click="checkBoxes.isHvtChecked = !checkBoxes.isHvtChecked; toggleHvtChecked()">Current HVT</label>
+                            <br />
+                        </div>
+                    </div>
+                    <!--<div class="col col-sm-6">-->
+                        <!--<div class="checkbox">-->
+                            <!--<input type="checkbox"  id="cbDemoGrid"-->
+                                   <!--ng-model="checkBoxes.isDemoChecked" ng-change="toggleDemoGrid()"/>-->
+                            <!--<label ng-click="checkBoxes.isDemoChecked = !checkBoxes.isDemoChecked; toggleDemoGrid()">Demo Grid</label>-->
+                            <!--<br />-->
+                        <!--</div>-->
+                        <!--<div class="checkbox">-->
+                            <!--<input type="checkbox"  id="cbDemoCrop"-->
+                                   <!--ng-model="checkBoxes.isDemoCropChecked" ng-change="toggleDemoCropGrid()"/>-->
+                            <!--<label ng-click="checkBoxes.isDemoCropChecked = !checkBoxes.isDemoCropChecked; toggleDemoCropGrid()">Crop Grid</label>-->
+                            <!--<br />-->
+                        <!--</div>-->
+                        <!--<div class="checkbox">-->
+                            <!--<input type="checkbox"  id="cbDemoCME"-->
+                                   <!--ng-model="checkBoxes.isDemoCMEChecked" ng-change="toggleDemoCME()"/>-->
+                            <!--<label ng-click="checkBoxes.isDemoCMEChecked = !checkBoxes.isDemoCMEChecked; toggleDemoCME()">CME</label>-->
+                            <!--<br />-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                </div>
+                <button class="btn btn-info btn-sm" ng-click="turnAllInvestigationLayersOff()" title="Clear all markers from the map">Clear Selections</button>
+            </uib-accordion-group>
+            <!--No Results Alert Container-->
+            <div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isFaultsChecked && faultsData.faults.length == 0">
+                    No  Faults for {{areaFData.mostSpecificSelectionIdentifier}} on {{controlPanelSelectionData.selectedCalendarDate | date: 'shortDate'}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isLightningDayChecked && lightningData.lightnings.status == 0" >
+                    No Lightning Data for {{areaFData.mostSpecificSelectionIdentifier}} on {{controlPanelSelectionData.selectedCalendarDate | date: 'shortDate'}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isTroubleTicketsChecked && troubleTicketsData.troubleTickets.length == 0">
+                    No Trouble Tickets for {{areaF.mostSpecificSelectionIdentifier}} on {{controlPanelSelectionData.selectedCalendarDate | date: 'shortDate'}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isEquipmentLogChecked && equipmentLogsData.equipmentLogs.length == 0">
+                    No Open Equipment Logs for {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isVinesChecked && vinesData.vines.length == 0">
+                    No Open Vines in {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isOpenConditionAssessmentsChecked && openConditionAssessmentData.openConditionAssessments.status == 0">
+                    No Open Condition assessment tickets in {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isKnownMomentariesFeederOutagesChecked && knownMomentariesFeederOutagesData.knownMomentariesFeederOutages.status == 0">
+                    No Known Momentaries or Outages for {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isPalmsBamboosChecked && palmsBambooData.palmsBamboos.status == 0">
+                    No Palms or bamboo reported for {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isALSChecked && alsEventsData.alsEvents.status == 0">
+                    No ALS events for {{areaFData.mostSpecificSelectionIdentifier}} within the selected Date Range
+                </div>
+                <!--<div class="alert alert-danger" ng-show="checkBoxes.isFeederFailurePointsChecked && feederFailurePointData.feederFailurePoints.status == 0">-->
+                    <!--No Feeder failure Points Located for {{controlPanelSelectionData.mostSpecificSelectionIdentifier}}-->
+                <!--</div>-->
+                <!--<div class="alert alert-danger" ng-show="checkBoxes.isFeederFailurePointsChecked && feederFailurePointsData.feederFailurePoints.status == 0">-->
+                    <!--No Failure Point Locations found for {{areaFData.mostSpecificSelectionIdentifier}}-->
+                <!--</div>-->
+                <div class="alert alert-danger" ng-show="checkBoxes.isComplaintsChecked && complaintsData.complaints.status == 0">
+                    No Complaints Data found for {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+                <div class="alert alert-danger" ng-show="checkBoxes.isHvtChecked && hvtData.HvtList.status == 0">
+                    No High Voltage Transformers found for {{areaFData.mostSpecificSelectionIdentifier}}
+                </div>
+            </div>
+            <!--<div ng-show="faultsData.faults.length > 0">-->
+            <div ng-show="checkBoxes.isFaultsChecked && faultsData.faults.length > 0">
+                <uib-accordion-group heading="Faults"
+                                     is-open="true">
+                    <uib-accordion-heading>
+                        {{faultsData.faults.length}} Faults for {{areaFData.selectedSubstation._id}}
+                    </uib-accordion-heading>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <uib-pagination class="col-xs-12 pagination-sm" style="margin-bottom:5px;"
+                                            total-items="faultsData.faults.length"
+                                            ng-model="faultsCurrentPage"  max-size="5"
+                                            items-per-page="10" boundary-links="true"
+                                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                                            ng-show="faultsData.faults.length>10">
+                            </uib-pagination>
+                            <div class="col-xs-3">Order by:</div>
+                            <div class="btn-group col-xs-9" role="group">
+                                <button class="btn btn-sm btn-info" ng-class="{'active' :faultOrderBy=='faultDate'}" ng-click="faultOrderBy='faultDate'">Date Time</button>
+                                <button class="btn btn-sm btn-info" ng-class="{'active' :faultOrderBy==['-combinedFault','faultDate']}" ng-click="faultOrderBy=['-combinedFault','faultDate']">Combined</button>
+                                <button class="btn btn-sm btn-info" ng-class="{'active' :faultOrderBy=='feederNumber'}" ng-click="faultOrderBy='feederNumber'">Feeder</button>
+                            </div>
+                        </div>
+                        <div ng-class="{'sideTabList-active': fault.isActive}"
+                             class="sideTabList col-xs-12" ng-repeat="fault in faultsData.faults |
+                             orderBy: faultOrderBy|
+                             startFrom:(faultsCurrentPage-1)*10 | limitTo:10">
+                            <div class="col-xs-12" ng-click="toggleFault(fault)">
+                                <div class="col-xs-6">
+                                    <strong>feederNumber:</strong>
+                                    <span ng-show="fault.combinedFault">{{fault.groupedF[0].feederNumber}}</span>
+                                    <span ng-show="!fault.combinedFault">{{fault.feederNumber}}</span>
+                                </div>
+                                <div class="col-xs-6" ng-class="{'nee-green': fault.combinedFault,'fpl-blue': !fault.combinedFault}">
+                                    <strong>Fault ID</strong>:
+                                    <span ng-show="fault.combinedFault">Combined </span>
+                                    <span ng-show="!fault.combinedFault" class="fpl-blue">{{fault.id}}</span>
+                                </div>
+
+                                <div class="col-xs-6" ng-show="!fault.combinedFault">
+                                    <span>
+                                        <strong>Date: </strong><span ng-bind="fault.faultDate | date:'shortDate'"></span>
+                                        <br /><span class="glyphicon glyphicon-time"></span>
+                                        <span ng-bind="fault.faultDate | date:'HH:mm:ss'"></span>
+                                    </span>
+                                </div>
+                                <div class="col-xs-6" ng-show="!fault.combinedFault">
+                                    <span ng-show="fault.faultType!=='Breaker'"><strong>{{fault.faultType}}</strong>: {{fault.faultInformation}}</span>
+                                    <span ng-show="fault.faultType=='Breaker'"><strong>{{fault.faultType}}</strong>: {{fault.faultType2}}</span>
+                                    <img src="images/icon_afs.svg" class="icon-size" ng-show="fault.faultType=='AFS'"/>
+                                    <img src="images/icon_fci.svg" class="icon-size" ng-show="fault.faultType=='FCI'"/>
+                                    <br />
+                                    <span ng-show="fault.faultA>fault.faultB && fault.faultA>fault.faultC"><strong>A</strong>: {{fault.faultA | number:0}}</span>
+                                    <span ng-show="fault.faultB>fault.faultA && fault.faultB>fault.faultC"><strong>B</strong>: {{fault.faultB | number:0}}</span>
+                                    <span ng-show="fault.faultC>fault.faultB && fault.faultC>fault.faultA"><strong>C</strong>: {{fault.faultC | number:0}}</span>
+                                </div>
+
+                                <div class="col-xs-12" ng-show="fault.combinedFault">
+                                        <strong>Date: </strong><span ng-bind="fault.groupedF[0].faultDate | date:'shortDate'"></span>
+                                        <br />
+                                        <strong>Between: </strong>{{fault.startTime | date:'HH:mm:ss'}} & {{fault.endTime | date:'HH:mm:ss'}} </span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 flexrow flex-wrap flexhalf" ng-show="fault.combinedFault">
+                                <span ng-repeat="gf in fault.groupedF track by $index" class="col-xs-6 fault-on-off" ng-click="toggleCombinedFault(fault,gf)">
+                                <!--<span ng-repeat="gf in fault.groupedF track by $index" class="col-xs-6" ng-click="gf.includeFault=!gf.includeFault">-->
+                                    <span class="glyphicon" ng-class="{'txt-fpl-blue glyphicon-eye-open': gf.includeFault==true, 'txt-red glyphicon-eye-close': gf.includeFault==false}"> </span>
+                                     ID: {{gf.id}}
+                                    <span ng-show="gf.faultType=='Breaker'">| {{gf.faultType}}</span>
+                                    <img src="images/icon_afs.svg" class="icon-size" ng-show="gf.faultType=='AFS'"/>
+                                    <img src="images/icon_fci.svg" class="icon-size" ng-show="gf.faultType=='FCI'"/>
+
+                                    <span ng-show="gf.faultA>fault.faultB && gf.faultA>gf.faultC"><strong>A</strong></span>
+                                    <span ng-show="gf.faultB>fault.faultA && gf.faultB>gf.faultC"><strong>B</strong></span>
+                                    <span ng-show="gf.faultC>fault.faultB && gf.faultC>gf.faultA"><strong>C</strong></span>
+                                </span>
+
+                            </div>
+                        </div>
+                    </div>
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isTroubleTicketsChecked && troubleTicketsData.troubleTickets.length > 0">
+                <uib-accordion-group heading="TroubleTickets" is-open="true">
+
+                    <uib-accordion-heading>
+                        <!--<h5 ng-show="!troubleTicketsData.troubleTickets" class="clear"> No tickets for this  on {{controlPanelSelectionData.selectedCalendarDate | date: 'shortDate'}}</h5>-->
+                        <h5 ng-show="troubleTicketsData.troubleTickets">
+                            {{troubleTicketsData.troubleTickets.length}} Tickets on {{areaFData.mostSpecificSelectionIdentifier}}
+                            - {{(troubleTicketsData.troubleTickets | filter: ttTypeFilter).length}} showing
+                        </h5>
+                    </uib-accordion-heading>
+                    <!--<div id="tkt-wrapper" class="col-xs-12" ng-show="troubleTicketsData.troubleTickets.length > 0">-->
+
+                        <uib-pagination class="col-xs-12 pagination-sm"
+                                        total-items="(troubleTicketsData.troubleTickets | filter: ttTypeFilter).length"
+                                        ng-model="troubleTicketsCurrentPage"
+                                        items-per-page="5" max-size="5" boundary-links="true" ng-show="troubleTicketsData.troubleTickets.length>5"
+                                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+                        </uib-pagination>
+                    <div class="col-xs-12 alert alert-info">Filter from Map Controls at right<img src="../../../../images/investigate.png"></div>
+                    <div class="col-xs-3">Order by:</div>
+                    <div class="btn-group col-xs-9" role="group">
+                        <button class="btn btn-sm btn-info" ng-class="{'active' :ttOrderBy=='TCKT_CRTE_DTTM'}" ng-click="ttOrderBy='TCKT_CRTE_DTTM'">Date</button>
+                        <button class="btn btn-sm btn-info" ng-class="{'active' :ttOrderBy=='TCKT_STAT_CODE'}" ng-click="ttOrderBy='TCKT_STAT_CODE'">Status</button>
+                        <button class="btn btn-sm btn-info" ng-class="{'active' :ttOrderBy=='TCKT_TYPE_CODE'}" ng-click="ttOrderBy='TCKT_TYPE_CODE'">Type</button>
+                    </div>
+
+                        <div class="sideTabList col-xs-12" ng-repeat="t in troubleTicketsData.troubleTickets | filter: ttTypeFilter
+                            | orderBy: ttOrderBy | startFrom:(troubleTicketsCurrentPage-1)*5 | limitTo:5"
+                             ng-class="{'sideTabList-active': t.isActive}" ng-click="selectInvMapIcon(t,troubleTicketsData.troubleTickets, 'TRBL_TCKT_NUM')">
+                            <div class="row col-xs-12" style="padding:0 0 0 5px">
+                                <div class="col-xs-3">
+                                    <!-- Quick and dirty color coding since this will be removed later -->
+                                    <div class="status-bar" ng-class="{
+                                        'nee-green': t.TCKT_STAT_CODE=='complete' || t.TCKT_STAT_CODE=='scArrived' || t.TCKT_STAT_CODE=='arrived',
+                                        'fpl-grey' : t.TCKT_STAT_CODE=='canceled',
+                                        'bg-yellow': t.TCKT_STAT_CODE=='assigned' || t.TCKT_STAT_CODE=='scAssigned' || t.TCKT_STAT_CODE=='scEnroute' || t.TCKT_STAT_CODE=='invReferred',
+                                        'bg-red'   : t.TCKT_STAT_CODE=='dispatcherReferred' || t.TCKT_STAT_CODE=='new'
+                                    }">
+                                    </div>
+                                    <strong>Tkt #: </strong><br />
+                                    <span>{{t.TRBL_TCKT_NUM}}</span>
+                                </div>
+                                <div class="col-xs-5">
+                                    <strong>Date: </strong>
+                                    <span>
+                                      {{t.TCKT_CRTE_DTTM | date:'shortDate'}} <br />
+                                      <span class="glyphicon glyphicon-time"></span> {{t.TCKT_CRTE_DTTM | date:'shortTime'}}
+                                        <br />
+
+                                    </span>
+                                </div>
+                                <div class="col-xs-4">
+                                    <strong>Tkt Type: </strong><span>{{t.TCKT_TYPE_CODE}}</span>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="row col-xs-12" style="padding:0 0 0 5px">
+                                <div class="col-xs-8" ng-class="{
+                                    'nee-green': t.TCKT_STAT_CODE=='complete' || t.TCKT_STAT_CODE=='scArrived' || t.TCKT_STAT_CODE=='arrived',
+                                    'fpl-grey' : t.TCKT_STAT_CODE=='canceled',
+                                    'bg-yellow': t.TCKT_STAT_CODE=='assigned' || t.TCKT_STAT_CODE=='scAssigned' || t.TCKT_STAT_CODE=='scEnroute' || t.TCKT_STAT_CODE=='invReferred',
+                                    'bg-red'   : t.TCKT_STAT_CODE=='dispatcherReferred' || t.TCKT_STAT_CODE=='new'
+                                         }" style="padding:2px;">
+                                    <strong>Status:</strong> {{t.TCKT_STAT_CODE}}
+                                </div>
+                                <div class="col-xs-4">
+                                    <!--<strong>TicketType: </strong><span>{{t.TCKT_TYPE_CODE}}</span>-->
+                                    <strong>Interruption: </strong><span>{{t.IRPT_TYPE_CODE}}</span>
+                                    <br />
+                                </div>
+                            </div>
+
+
+                            <!--<div class="col-xs-4">-->
+                                <!--<strong>TicketType: </strong><span>{{t.TCKT_TYPE_CODE}}</span>-->
+                                <!--<strong>Interuption: </strong><span>{{t.IRPT_TYPE_CODE}}</span>-->
+                                <!--<br />-->
+                            <!--</div>-->
+                        </div>
+                        <hr />
+                        <div class="col-xs-12">
+                            <button type="button" class="btn btn-primary"
+                                    ng-csv="troubleTicketsData.troubleTickets"
+                                    csv-column-order="['TRBL_TCKT_NUM','_id','FDR_NUM', 'TCKT_TYPE_CODE','IRPT_TYPE_CODE','TCKT_CRTE_DTTM','TCKT_STAT_CODE','TCKT_DVC_COOR',
+                            'CUST_AFCT_CNT', 'TOTL_CALL_FOR_THE_TCKT','MGR_AREA_CODE', 'SRV_CTR_NAME','SUBSTATION']"
+                                    filename="trouble-tickets_{{areaFData.mostSpecificSelectionIdentifier}}_{{controlPanelSelectionData.selectedCalendarDate | date:'MMddyyyy'}}.csv"
+                                    csv-header="['TRBL_TCKT_NUM','id','Feeder', 'TCKT_TYPE','IRPT_TYP','TCKT creation date-time','TCKT_STATUS','TCKT_DVC_COOR',
+                            'Customers Affected', 'Total Calls for The Ticket','MA','SVC','SUBSTATION' ]">
+                                <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                            </button>
+                        </div>
+                    <!--</div>-->
+
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isEquipmentLogChecked && equipmentLogsData.equipmentLogs.length !==0">
+                <uib-accordion-group heading="Equipment Log" is-open="true">
+                    <uib-accordion-heading>
+                        <h5 ng-show="equipmentLogsData.equipmentLogs">{{equipmentLogsData.equipmentLogs.length}} Equipment Logs for {{areaFData.mostSpecificSelectionIdentifier}}</h5>
+                    </uib-accordion-heading>
+
+                <div ng-show="equipmentLogsData.equipmentLogs.length >0">
+                    <uib-pagination class="col-xs-12 pagination-sm" total-items="equipmentLogsData.equipmentLogs.length" ng-model="equipmentLogsCurrentPage" items-per-page="5" max-size="5" rotate="false" ng-show="equipmentLogsData.equipmentLogs.length>5">
+                    </uib-pagination>
+                    <div class="col-xs-12 sideTabList" ng-repeat="e in equipmentLogsData.equipmentLogs  | startFrom:(equipmentLogsCurrentPage-1)*5 | limitTo:5">
+                        <div class="col-xs-6 bottomline">
+                            <strong>Sub: </strong><span>{{e.sub}}</span>
+                        </div>
+                        <div class="col-xs-6 bottomline">
+                            <strong>Feeder: </strong><span>{{e.feeder}}</span>
+                        </div>
+                        <div class="col-xs-12">
+                            <strong>Remarks:</strong><span>{{e.TXT_REMARKS}}</span>
+                        </div>
+                    </div>
+                    <hr />
+                    <div>
+                        <button type="button" class="btn btn-primary"
+                                ng-csv="equipmentLogsData.equipmentLogs"
+                                filename="equipLog_{{controlPanelSelectionData.mostSpecificSelectionIdentifier}}_{{controlPanelSelectionData.selectedCalendarDate | date:'MMddyyyy'}}.csv"
+                                csv-header="['id_log','TS_UPDT','sub','feeder','REPORT_BY','TXT_REMARKS','LOG_STATUS','DT_START','EQU_TYPE','TKT_NUM','TKT_DATE','lat','lng']">
+                            <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                        </button>
+                    </div>
+                </div>
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isFCIChecked">
+                <uib-accordion-group heading="FCI eDNA" is-open="true" ng-show="checkBoxes.isFCIChecked">
+                    <uib-accordion-heading>
+                        <h5>{{fcis.fciFaultcount}} FCI Faults for {{areaFData.mostSpecificSelectionIdentifier}}</h5>
+                    </uib-accordion-heading>
+                    <div class="row">
+                        <!--<div class="col-xs-4" style="padding-top:5px;">Order by:</div>-->
+                        <!--<div class="btn-group col-xs-8" role="group">-->
+                            <!--<button class="btn btn-sm btn-info" ng-class="{'active' :fciOrderBy=='switchNumber'}" ng-click="fciOrderBy='faultDate'">Switch</button>-->
+                            <!--<button class="btn btn-sm btn-info" ng-class="{'active' :fciOrderBy=='faultDate'}" ng-click="fciOrderBy='faultDate'">other??</button>-->
+                        <!--</div>-->
+                    </div>
+                    <!--<uib-pagination class="col-xs-12 pagination-sm"-->
+                    <!--total-items="faultsData.faults.length"-->
+                    <!--ng-model="faultsCurrentPage"  max-size="5"-->
+                    <!--items-per-page="10"-->
+                    <!--ng-show="faultsData.faults.length>10"  >-->
+                    <!--</uib-pagination>-->
+
+                   <div ng-repeat="fci in fcis.FAMPs" class="row fciParent" ng-click="selectFciFaults(fci)" >
+                       <!--<div  ng-show="fci.hasFault" class="row">-->
+                       <div>
+                           <div class="col-xs-12 fciSwitch" ng-class="{'active':fci.isActive}">
+                               <div class="col-xs-12">
+                                   <strong>feederNumber: </strong>{{fci[0].feederNum}}<br/>
+                               </div>
+                               <div class="row" ng-repeat="FAMP in fci" >
+                                   <div class="col-xs-6">
+                                       <span ng-show="FAMP.Type=='FCI'"><img src="images/icon_fci.svg" height="15"/></span>
+                                       <span ng-show="FAMP.Type=='AFS'"><img src="images/icon_afs.svg" height="15"/></span>
+                                       <strong>Date: </strong><span ng-bind="FAMP.Date | date:'shortDate'"></span>
+                                       <br /><span class="glyphicon glyphicon-time"></span>
+                                       <span ng-bind="FAMP.Date | date:'HH:mm:ss'"></span>
+                                   </div>
+                                   <div class="col-xs-6">
+                                       <strong>FPLID: </strong>  {{FAMP.fplID}}
+                                       <br/>
+                                       <strong>FAMP: </strong> {{FAMP.FAMP}}
+                                   </div>
+                               </div>
+
+
+                           </div>
+                           <div ng-repeat="point in fci.ednaPoints" class="col-xs-12 fciPoint">
+                               <div class="col-xs-7">
+                                   <!--<strong>Date: </strong><span ng-bind="fault.faultDate | date:'shortDate'"></span>-->
+                                   <strong>Date: </strong><span>{{point.time| date:'shortDate'}}
+                                   <span class="glyphicon glyphicon-time"></span>{{point.time |date:'HH:mm:ss'}}</span>
+                               </div>
+                               <div class="col-xs-5">
+                                   <span><strong>Amps: </strong>{{point.amp}}</span>
+                                   <!--<br /><span class="glyphicon glyphicon-time"></span> <span ng-bind="fault.faultDate | date:'HH:mm:ss'"></span>-->
+                                   <!--<br /><span class="glyphicon glyphicon-time"></span>16:59:50<span></span>-->
+                               </div>
+                               <!--<div class="col-xs-6">-->
+                                   <!--&lt;!&ndash;<span ng-show="fault.faultA>fault.faultB && fault.faultA>fault.faultC"><strong>A</strong>:{{fault.faultA | number:2}}</span>&ndash;&gt;-->
+
+                                   <!--&lt;!&ndash;<span ng-show="fault.faultC>fault.faultB && fault.faultC>fault.faultA"><strong>C</strong>:{{fault.faultC | number:2}}</span>&ndash;&gt;-->
+                               <!--</div>-->
+                           </div>
+                       <!--</div>-->
+
+                       </div>
+                   </div>
+                    <div>
+                        <button type="button" class="btn btn-primary"
+                                ng-csv="formatFCIdataForCsv(fcis.FAMPs)"
+                                filename="FAMPevents_{{areaFData.mostSpecificSelectionIdentifier}}_{{areaFData.selectedCalendarDate | date:'MMddyyyy'}}.csv"
+                                csv-column-order="['fplID','switchNumber','feederNum','sub','phase','date','time','amp','device', 'fampID']"
+                                csv-header="['FPL ID','Switch','Feeder','Sub','Phase','Date','Time','Amps','device','FAMP ID']"
+                        >
+                            <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                        </button>
+                    </div>
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isVinesChecked && vinesData.vines.length > 0">
+                <uib-accordion-group heading="Vines" is-open="isVinesOpen">
+                    <uib-accordion-heading>
+                        <h5>All Vines: {{vinesData.vines.length}}</h5>
+                    </uib-accordion-heading>
+
+                    <div id="vineBars" style = "position: relative" ng-show="vinesData.vines.length > 0">
+
+                            <button class="btn sm-button right btn-primary" ng-click="showVinesList();" style = "position: absolute; top: -66px; right: 0" ng-show="isVinesOpen">Open List</button>
+                            <!--<label>New: </label><span> {{vinesBlue.length}}</span>
+                                                            <label>Sprayed: </label><span> {{vinesGreen.length}}</span>
+                                            <label>15+ Days: </label><span> {{vinesOrange.length}}</span>
+                            <label>30+ Days: </label><span> {{vinesRed.length}}</span>
+                                            <label>Ticketed: </label><span> {{vinesYellow.length}}</span>
+                                                            <label>Ticketed: </label><span> {{vinesGrey.length}}</span>
+                            -->
+                            <div class="alert alert-info" role="alert">
+                                Vines investigation currently based on Emails received, not work orders
+                            </div>
+                        <!--TODO Change when Vines is Updated for WMS Work Orders-->
+                            <!--<div ng-hide="!vinesData.vines.length">-->
+                                <!--<label>New: {{vinesData.blueVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.blueVines.length">-->
+                                    <!--<div id="vblue" class="bgblue" role="progressbar" aria-valuenow="{{vinesData.blueVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.blueVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.blueVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label>Completed: {{vinesData.greenVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.greenVines.length">-->
+                                    <!--<div id="vgreen" class="bg-green" role="progressbar" aria-valuenow="{{vinesData.greenVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.greenVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.greenVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label>15+ Days: {{vinesData.orangeVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.orangeVines.length">-->
+                                    <!--<div id="vorange" class="bg-orange" role="progressbar" aria-valuenow="{{vinesData.orangeVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.orangeVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.orangeVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label>30+ Days: {{vinesData.redVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.redVines.length">-->
+                                    <!--<div id="vred" class="bg-red" role="progressbar" aria-valuenow="{{vinesData.redVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.redVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.redVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label>Held: {{vinesData.greyVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.greyVines.length">-->
+                                    <!--<div id="vgrey" class="fpl-grey" role="progressbar" aria-valuenow="{{vinesData.greyVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.greyVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.greyVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label>Others: {{vinesData.yellowVines.length}}</label>-->
+                                <!--<div class="progress" ng-hide="!vinesData.yellowVines.length">-->
+                                    <!--<div id="vyellow" class="bg-yellow" role="progressbar" aria-valuenow="{{vinesData.yellowVines.length}}" aria-valuemin="0" aria-valuemax="{{vinesData.vines.length}}" style="width: {{(vinesData.yellowVines.length/vinesData.vines.length)*100}}%">-->
+                                        <!--<span>{{vinesData.yellowVines.length}}</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        </div>
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isOpenConditionAssessmentsChecked && openConditionAssessmentData.openConditionAssessments.length >0">
+            <!--<div ng-show="checkBoxes.isOpenConditionAssessmentsChecked && openConditionAssessmentData.openConditionAssessments.length >0">-->
+                <!-- OPEN CONDITION ASSESSMENTS -->
+                <uib-accordion-group heading="ALS Events" is-open="true">
+                    <uib-accordion-heading>
+                        <h5 ng-show="openConditionAssessmentData.openConditionAssessments">{{openConditionAssessmentData.openConditionAssessments.length}} Open CA Events for {{areaFData.mostSpecificSelectionIdentifier}}</h5>
+                    </uib-accordion-heading>
+                    <!--{{areaFData.selectedFeeder.name}}-->
+                    <div class="y-scroll" style="max-height:325px">
+                        <table class="table table-condensed table-striped table-hover txt-center">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Severity</th>
+                                <th>Feeder</th>
+                                <th>Device</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="ca in openConditionAssessmentData.openConditionAssessments |orderBy : '-severity'"
+                                ng-click="selectInvMapIcon(ca,openConditionAssessmentData.openConditionAssessments,'tran_dtl_id')" ng-class="{'sideTabList-active':ca.isActive}">
+                                <!--selectCA(ca) -->
+                                <td ><span class="glyphicon glyphicon-picture" ng-hide="!ca.image1"></span></td>
+                                <td ng-class="{'bg-yellow': ca.severity==4 || ca.severity==5} " >{{ca.severity}}</td>
+                                <td>{{ca.feeder_number}}</td>
+                                <td>{{ca.object_type}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </uib-accordion-group>
+            </div>
+
+            <div>
+
+            </div>
+            <div ng-show="checkBoxes.isComplaintsChecked && complaintsData.complaints.status !== 0">
+
+                <uib-accordion-group heading="Customer Complaints" is-open="true">
+                    <uib-accordion-heading>
+                        <h5 ng-show="complaintsData.complaints">{{complaintsData.complaints.length}} Complaints located for {{areaFData.mostSpecificSelectionIdentifier}}</h5>
+                    </uib-accordion-heading>
+                    <div class="alert alert-info">
+                        List below also shows complaints that could not be mapped (Indicated by the blue bar at left).
+                    </div>
+                    <uib-pagination class="col-xs-12 pagination-sm" style="margin-bottom:5px;"
+                                    total-items="complaintsData.complaints.length"
+                                    ng-model="complaintsCurrentPage"  max-size="5"
+                                    items-per-page="5" boundary-links="true"
+                                    previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                                    ng-show="complaintsData.complaints.length>5">
+                    </uib-pagination>
+
+                    <div class="sideTabList col-xs-12" style="height:auto;" ng-repeat="c in complaintsData.complaints | startFrom:(complaintsCurrentPage-1)*5 | limitTo:5"
+                         ng-class="{'b-left-blue': c.location.coordinates[0]==null || c.location.coordinates[1]==null}" >
+                        <span class="col-xs-6"><strong>Feeder Number:</strong> {{c.feederNum}}</span>
+                        <span class="col-xs-6"><strong>Inquiry Type:</strong> {{c.inquiryType}}</span>
+                        <span class="col-xs-12"><strong>Address:</strong> {{c.serviceAddr}}</span>
+                    </div>
+
+                    <hr />
+                    <div>
+                    <button type="button" class="btn btn-primary"
+                            ng-csv="complaintsData.complaints"
+                            csv-column-order="['region','ma','SRV_CTR_CODE','SRV_CTR_NAME','feederNum','fplid','inquiryType','aTcktCritera','MajorCat','SubCat','CauseCode','fplLogNo','inquiryDate','serviceAddr','compRecievedBy','comHandleGroup','compHandleRep','tln','premiseNum','acctNum','custLastName','custAddr']"
+                            filename="complaintsData_{{areaFData.data.mostSpecificSelectionIdentifier}}_{{controlPanelSelectionData.selectedCalendarDate | date:'MMddyyyy'}}.csv"
+                            csv-header="['Region','MA','SRV_CTR_CODE','SRV_CTR_NAME','Feeder Num','FPL id','Inquiry Type','A Tckt Critera','Major Category','Sub Category','Cause Code','FPL Log Number','Inquiry Date','Service Address','Complaint Recieved By','Complaint Handle Group','Complaint Handle Rep','TLN','Premise Num','Account Num','Customer Last Name','Customer Address']">
+                        <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                    </button>
+                    </div>
+
+                </uib-accordion-group>
+            </div>
+
+            <div ng-show="checkBoxes.isALSChecked && alsEventsData.alsEvents.status !== 0">
+            <!-- && alsEventsData.alsEvents.status !== 0 -->
+            <uib-accordion-group heading="ALS Events" is-open="true">
+                <uib-accordion-heading>
+                    <h5 ng-show="alsEventsData.alsEvents">{{(alsEventsData.alsEvents | filter:{feeder: areaFData.selectedFeeder.name}).length}} ALS Events for {{areaFData.mostSpecificSelectionIdentifier}}</h5>
+                </uib-accordion-heading>
+                <!--{{areaFData.selectedFeeder.name}}-->
+                <table class="table table-condensed table-striped table-hover txt-center">
+                    <thead>
+                    <tr>
+                        <th>Fpl ID</th>
+                        <th>Date</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="a in alsEventsData.alsEvents | orderBy:['ts_parent_fpl_id','EventDayMoment'] | filter:{feeder: areaFData.selectedFeeder.name}">
+                        <td>{{a.ts_parent_fpl_id}}</td>
+                        <td>{{a.EventDay}}</td>
+                        <td>{{a.countA}}</td>
+                        <td>{{a.countB}}</td>
+                        <td>{{a.countC}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </uib-accordion-group>
+        </div>
+        <div ng-show="checkBoxes.isHvtChecked && hvtData.HvtList.status !== 0">
+            <!-- && alsEventsData.alsEvents.status !== 0 -->
+            <uib-accordion-group heading="High Voltage Tx" is-open="true">
+                <uib-accordion-heading>
+                    <h5 ng-show="hvtData.HvtList">{{hvtData.HvtList.length}} High Voltage TX for
+                        {{areaFData.mostSpecificSelectionIdentifier}}
+                        <span ng-show="!areaFData.mostSpecificSelectionIdentifier">FPL</span>
+                    </h5>
+                </uib-accordion-heading>
+                <div>
+                    <div class="col-sm-4 bg-bright-yellow"> < 25 days old</div>
+                    <div class="col-sm-4 bg-yellow"> 25 - 34 days old</div>
+                    <div class="col-sm-4 bg-red"> 35+ days old</div>
+                </div>
+                <table class="table table-condensed table-striped table-hover txt-center">
+                    <thead>
+                    <tr>
+                        <th>Feeder</th>
+                        <!--<th>DDB</th>-->
+                        <th>Min/Max</th>
+                        <th>Phase</th>
+                        <th>Flag Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="h in hvtData.HvtList | orderBy:'insertDate'">
+                        <td>{{h.substation}} {{h.feeder}}</td>
+                        <!--<td>{{h.lateral_ddb_long}}</td>-->
+                        <td>{{h.minReading}} / {{h.maxReading}}</td>
+                        <td>{{h.phase}}</td>
+                        <td ng-class="{
+                            'bg-bright-yellow': h.daysOld < 25,
+                            'bg-yellow': h.daysOld >=25 || h.daysOld <= 34,
+                            'bg-red'   : h.daysOld >= 35}">
+                            {{h.insertDate | date: 'shortDate'}} <strong>{{h.daysOld}} days</strong>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <button type="button" class="btn btn-primary"
+                        ng-csv="hvtData.HvtList"
+                        filename="CurrentHVT{{areaFData.data.mostSpecificSelectionIdentifier}}_{{controlPanelSelectionData.selectedCalendarDate | date:'MMddyyyy'}}.csv"
+                        csv-column-order="['substation','feeder','lateral_ddb_long','fplId','insertDate','kva_rate','minReading','maxReading','workOrder',
+                        'phase','bank_code','load','latitude','longitude','managementArea','customerCount','premises']"
+                        csv-header="['Sub','Feeder','DDB','FPL ID','Insert Date','KVA Rate','Min Reading','Max Reading','Work Order','Phase','bank_code',
+'load','Lat','Long','MA','Customer Count','Premises']"
+                        >
+                    <!--
+                    csv-column-order="[]"
+                    csv-header="[]"
+                    -->
+                    <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                </button>
+
+            </uib-accordion-group>
+        </div>
+
+        </uib-accordion>
+    </div>
+
+    <div ng-include="'modals/sideTabs.html'"></div>
+
+</div>

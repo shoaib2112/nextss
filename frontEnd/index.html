@@ -1,0 +1,19 @@
+﻿<!doctype html>
+<html ng-app="nextGrid">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/nextgrid.min.css" />
+  <title>NEXTgrid</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+  <div ui-view></div>
+  <!-- MAP KEY modal -->
+  <div class="slide-animate" ng-include="'modals/map-legend.html'"></div>
+  <!--leaflet to allow for canvas use over svg-->
+  <script>L_PREFER_CANVAS = true;</script>
+  <script src="js/nextgrid.min.js"></script>
+</body>
+</html>

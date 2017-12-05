@@ -1,0 +1,108 @@
+<div style="display: inline-block">
+    <div style="background-color: rgba(8, 121, 173, 0.78); width: 496px; padding: 25px; display: inline-block; position: relative">
+        <i style="position: absolute; right: 17px; color: white; top: 9px; font-size: 2em; cursor: pointer;" class="glyphicon glyphicon-minus" ng-show="selectAreaIsOpen" ng-click="selectAreaIsOpen = !selectAreaIsOpen"></i>
+        <i style="position: absolute; right: 15px; color: white; top: 9px; font-size: 2em; cursor: pointer;" class="glyphicon glyphicon-chevron-down" ng-show="!selectAreaIsOpen" ng-click="selectAreaIsOpen = !selectAreaIsOpen"></i>
+        <div ng-show="selectAreaIsOpen">
+            <div style="padding-bottom: 10px;">
+                <input style="width:400px" name="search" id="search" type="text" placeholder="Search MA, Service Center, Substation or Feeder" class="form-control"
+                       ng-model="searchedSubstation" typeahead-on-select="onSelectSearchSubstation($item)"
+                       uib-typeahead="substation._id for substation in managementAreas.all.serviceCenters.all.substations
+                   | toArray | filter:$viewValue | limitTo:16">
+            </div>
+            <select style="width: 55px" class="form-control"
+                    ng-model="controlPanelSelectionData.selectedManagementArea"
+                    ng-options="option as option._id for option in managementAreas | toArray | orderBy: '_id'"
+                    ng-change="managementAreaSelected()">
+            </select>
+            <select style="width: 125px" class="form-control"
+                    ng-options="option._id for option in serviceCentersList | toArray | orderBy: '_id'"
+                    ng-model="controlPanelSelectionData.selectedServiceCenter"
+                    ng-change="serviceCenterSelected()">
+                <option value="">Service Center</option>
+            </select>
+            <select style="width: 150px" class="form-control"
+                    ng-options="option._id for option in substationsList | toArray | orderBy: '_id'"
+                    ng-model="controlPanelSelectionData.selectedSubstation" ng-change="substationSelected()">
+                <option value="">Substation</option>
+            </select>
+            <select style="width: 100px" class="form-control"
+                    ng-options="option.name for option in controlPanelSelectionData.selectedSubstation.feeders | toArray | orderBy: '_id'"
+                    ng-model="controlPanelSelectionData.selectedFeeder" ng-disabled="!controlPanelSelectionData.selectedSubstation" ng-change="feederSelected()">
+                <option value="">Feeder</option>
+            </select>
+            <br />
+            <select style="width: 125px; margin-top: 10px; margin-bottom: 10px; float: left" class="form-control">
+                <option>Today</option>
+                <option>Single Day</option>
+                <option>Custom Range</option>
+            </select>
+        <span style="width: 160px; float: left; padding-left: 10px; margin-top: 10px;" class="input-group">
+
+        <input ng-click="isCalendarOpen = false" placeholder="MM-DD-YYYY" ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all"
+               type="text" class="form-control" uib-datepicker-popup="MM-dd-yyyy"
+               ng-model="controlPanelSelectionData.selectedCalendarDate" is-open="isCalendarOpen" datepicker-options="dateOptions" ng-required="true"
+               close-text="Close" alt-input-formats="altInputFormats" />
+
+                  <span class="input-group-btn">
+                    <button ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default" ng-click="isCalendarOpen = !isCalendarOpen">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button>
+                  </span>
+
+    </span>
+        <span style="width: 160px; float: left; padding-left: 10px; margin-top: 10px;" class="input-group">
+
+        <input ng-click="isCalendarOpen = false" placeholder="MM-DD-YYYY" ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all"
+               type="text" class="form-control" uib-datepicker-popup="MM-dd-yyyy"
+               ng-model="controlPanelSelectionData.selectedCalendarDate" is-open="isCalendarOpen" datepicker-options="dateOptions" ng-required="true"
+               close-text="Close" alt-input-formats="altInputFormats" />
+
+                  <span class="input-group-btn">
+                    <button ng-disabled="controlPanelSelectionData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default" ng-click="isCalendarOpen = !isCalendarOpen">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button>
+                  </span>
+
+    </span>
+        </div>
+        <div ng-show="!selectAreaIsOpen" style="font-size: 16px; color: white;">
+            <span ng-show="controlPanelSelectionData.selectedManagementArea._id !== 'All'">
+                {{controlPanelSelectionData.selectedManagementArea._id}}
+                <span ng-show="controlPanelSelectionData.selectedServiceCenter._id !== undefined">
+                    <i class="glyphicon glyphicon-menu-right" style="font-size: 10px; top: -1px;"></i>
+                    {{controlPanelSelectionData.selectedServiceCenter._id}}
+                    <span ng-show="controlPanelSelectionData.selectedSubstation._id !== undefined">
+                        <i class="glyphicon glyphicon-menu-right" style="font-size: 10px; top: -1px;"></i>
+                        {{controlPanelSelectionData.selectedSubstation._id}}
+                        <span ng-show="controlPanelSelectionData.selectedFeeder.name !== undefined">
+                            <i class="glyphicon glyphicon-menu-right" style="font-size: 10px; top: -1px;"></i>
+                            {{controlPanelSelectionData.selectedFeeder.name}}
+                        </span>
+                    </span>
+                </span>
+            </span>
+            <span ng-show="controlPanelSelectionData.selectedManagementArea._id === 'All'">
+                Select Atleast A Management Area
+            </span>
+        </div>
+        <button style="float: none; clear:both; display: block; margin-top: 10px;" type="button" class="btn btn-default" ng-show="isInvestigationCollapsed" ng-click="isInvestigationCollapsed = !isInvestigationCollapsed">Add/Remove An Investigation Layer</button>
+        <button style="float: none; clear:both; display: block; margin-top: 10px;" type="button" class="btn btn-default" ng-show="!isInvestigationCollapsed" ng-click="isInvestigationCollapsed = !isInvestigationCollapsed">Close Investigation Layer Selection</button>
+    </div>
+
+    <div uib-collapse="isInvestigationCollapsed">
+        <div class="well well-lg" style="width:396px; background-image: none; background-color: rgba(8, 121, 173, 0.78); border-radius: 0; border: 0;">
+            <div class="btn-group">
+                <label style="border-radius: 4px; float:none; width: 75px" class="btn btn-primary" ng-model="checkModel.lightningDay" uib-btn-checkbox>Faults</label>
+                <label style="border-radius: 4px; float:none; width: 115px" class="btn btn-primary" ng-model="checkModel.lightningDay" uib-btn-checkbox>Lightning Day</label>
+                <label style="border-radius: 4px; float:none; width: 115px" class="btn btn-primary" ng-model="checkModel.lightningYTD" uib-btn-checkbox>Lightning YTD</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 75px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Vines</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 135px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Palms & Bamboo</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 120px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Trouble Tickets</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 158px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Open Equipment Log</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 206px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Open Condition Assessment</label>
+                <label style="border-radius: 4px; float:none; margin-top: 10px; width: 275px" class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Known Momentaries & Feeder Outages</label>
+                <!--<label class="btn btn-primary" ng-model="checkModel.faultMaps" uib-btn-checkbox>Fault Maps</label>-->
+            </div>
+        </div>
+    </div>
+</div>

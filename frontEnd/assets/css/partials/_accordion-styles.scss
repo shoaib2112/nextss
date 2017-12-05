@@ -1,0 +1,24 @@
+.panel-heading {
+    background-image: linear-gradient(to bottom,#0096db 0,#0975A7 100%) !important;
+}
+
+.panel-title {
+    background-color: rgba(0,0,0,0) !important;
+}
+
+.sideTabList>div:nth-child(n+2){
+    border-left: none !important;
+}
+
+.sideTabList:last-child {
+    border-bottom: none !important;
+}
+
+
+.sideTabList-active {
+    background-color: #DCE5FB !important;
+}
+
+.form-control {
+    padding: 6px 5px 12px 1px !important;
+}

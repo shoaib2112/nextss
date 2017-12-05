@@ -1,0 +1,210 @@
+﻿<html lang="en" ng-app="hvtApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Voltage Transformers</title>
+    <link rel="stylesheet" href="../css/nextgrid.min.css" />
+    <!--<link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/pdim-style.css">-->
+    
+  <style>
+      .tab-content .table-condensed {
+        font-size: 12px; 
+      }
+
+        .tab-content .table-condensed th {
+          font-size: 14px;
+          text-align: center;
+		  vertical-align: middle;
+        }
+    .table > tbody > tr > td {
+	  vertical-align: middle;
+    }
+	#btn-bank {
+		float: right;
+		position: absolute;
+		right: 20px;
+		top: 15px;
+}
+  </style>
+</head>
+<body ng-controller="hvtCtrl">
+    <div id="header">
+        <img src="../assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo">
+        <h3>NextGrid</h3>
+        <h5><span id="AppTitle"></span></h5>
+      <div id="btn-bank">
+        <!--<button class="btn btn-success" style="margin-left:5px;">
+        <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>
+          <a href="/nextGrid.html" style="color:#fff; text-decoration:none;">Map</a>
+        </button>-->
+
+        <div ng-include="'/ddMenu.html'"></div>
+
+      </div>
+    </div>
+
+    <div class="row" id="wrapper" style="max-width:95%;">
+        <h2>High Voltage Transformers</h2>
+      <div id="table" style="overflow:auto;">
+        <uib-tabset class="col col-md-12">
+          <uib-tab heading="Todays High Transformers">
+              <button type="button" class="btn btn-primary" ng-csv="txDay" filename="todayHVT.csv" csv-header="todayHdr"><img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV</button>
+            <table class="tabPDC table table-striped table-condensed">
+              <tr>
+                <th>MA</th>
+                <th>Substation</th>
+                <th>Feeder</th>
+                <th>Lateral</th>
+                <th>DDB</th>
+                <th>Readings</th>
+                <th style="min-width:90px">Date</th>
+                <th>Days</th>
+                <th>Work Order</th>
+                <th>Comments</th>
+                <th>Status</th>
+                <th>Tkt.</th>
+                <th>Cust.</th>
+              </tr>
+              <tr class="ng-cloak" ng-repeat="item in txDay | orderBy: 'insertDate'" ng-class="{green: item.green, red: item.red, yellow: item.yellow}">
+                <td>{{item.managementArea}}</td>
+                <td>{{item.Substation}}</td>
+                <td>{{item.Feeder}}</td>
+                <td>{{item.LateralDDBs[0]}}</td>
+                <td>{{item.ddb}}</td>
+                <td>{{item.minReading}} : {{item.maxReading}}</td>
+                <td>{{item.insertDate | date}}</td>
+                <td>{{item.days}}</td>
+                <td>{{item.wo}}</td>
+                <td>{{item.comments}}</td>
+                <td>{{item.status}}</td>
+                <td>{{item.tickets[0].Item1}} {{item.tickets[0].Item2 | date}}</td>
+                <td><a href="http://dpdcapps/ami/premise.jsp?startDate={{item.insertDate | date:'MM-dd-yyyy'}}&endDate={{today | date:'MM-dd-yyyy'}}&tx={{item.fplId}}">{{item.premises.length}}</a></td>
+              </tr>
+            </table>
+          </uib-tab>
+          <uib-tab heading="Recently Dropped Off">
+              <button type="button" class="btn btn-primary" ng-csv="txDrop" filename="recentDrop.csv" csv-header="recentDropHdr"><img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV</button>
+            <table class="tabPDC table table-striped table-condensed">
+              <tr>
+                <th>Substation</th>
+                <th>Feeder</th>
+                <th>DDB</th>
+                <th>FPL ID</th>
+                <th>Phase</th>
+                <th>Date On</th>
+                <th>Actions</th>
+              </tr>
+              <tr class="ng-cloak" ng-repeat="tx in txDrop | orderBy: 'start'">
+                <td>{{tx.Substation}}</td>
+                <td>{{tx.Feeder}}</td>
+                <td>{{tx.ddb}}</td>
+                <td>{{tx.fplId}}</td>
+                <td>{{tx.phase}}</td>
+                <td>{{tx.insertDate | date}}</td>
+                <td>
+                    <a type="button" class="btn" href="http://dpdcapps/ami/premise.jsp?startDate={{twoBack | date:'MM-dd-yyyy'}}&endDate={{today | date:'MM-dd-yyyy'}}&tx={{tx.fplId}}">Ping</a>
+                    <button ng-hide="meter.fplId === tx.fplId" type="button" class="btn" ng-click="getAMI(tx.fplId)">AMI</button>
+                    <span ng-show="meter.fplId === tx.fplId"> {{meter.min}} <{{meter.avg}}> {{meter.max}}</span>
+                </td>                  
+              </tr>
+            </table>
+          </uib-tab>
+          <uib-tab heading="Todays Suppressed">
+              <button type="button" class="btn btn-primary" ng-csv="txSuppress" filename="suppressed.csv" csv-header="suppressHdr">
+                <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+			  </button>
+            <table class="tabPDC table table-striped table-condensed">
+              <tr>
+                <th>Substation</th>
+                <th>Feeder</th>
+                <th>DDB</th>
+                <th>FPL ID</th>
+                <th>Phase</th>
+                <th>Actions</th>
+              </tr>
+              <tr class="ng-cloak" ng-repeat="tx in txSuppress | orderBy: 'Feeder'">
+                <td>{{tx.Substation}}</td>
+                <td>{{tx.Feeder}}</td>
+                <td>{{tx.ddb}}</td>
+                <td>{{tx.fplId}}</td>
+                <td>{{tx.phase}}</td>
+                <td>
+                  <a type="button" class="btn" href="http://dpdcapps/ami/premise.jsp?startDate={{twoBack | date:'MM-dd-yyyy'}}&endDate={{today | date:'MM-dd-yyyy'}}&tx={{tx.fplId}}">Ping</a>
+                  <button ng-hide="meter.fplId === tx.fplId" type="button" class="btn" ng-click="getAMI(tx.fplId)">AMI</button>
+                  <span ng-show="meter.fplId === tx.fplId"> {{meter.min}} <{{meter.avg}}> {{meter.max}}</span>
+                </td>
+              </tr>
+            </table>
+          </uib-tab>
+          <uib-tab heading="All High Transformers">
+            <button type="button" class="btn btn-primary" ng-csv="txAll" filename="allHVT.csv" csv-header="allHighHdr">
+              <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+			</button>
+            <table class="tabPDC table table-striped table-condensed">
+              <tr>
+                <th>DDB</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Days on Report</th>
+                <th>FPL ID</th>
+                <th>Feeder</th>
+                <th>Actions</th>
+              </tr>
+              <tr class="ng-cloak" ng-repeat="tx in txAll | orderBy:'tx.presence'">
+                <td>{{tx.ddb}}</td>
+                <td>{{tx.start | date}}</td>
+                <td>{{tx.end | date}}</td>
+                <td>{{tx.count}} / {{tx.diff}}</td>
+                <td>{{tx.fplId}}</td>
+                <td>{{tx.Feeder}}</td>
+                <td>
+                  <a type="button" class="btn" href="http://dpdcapps/ami/premise.jsp?startDate={{tx.start | date:'MM-dd-yyyy'}}&endDate={{tx.end | date:'MM-dd-yyyy'}}&tx={{tx.fplId}}">Ping</a>
+                  <button ng-hide="meter.fplId === tx.fplId" type="button" class="btn" ng-click="getAMI(tx.fplId)">AMI</button>
+                  <span ng-show="meter.fplId === tx.fplId"> {{meter.min}} <{{meter.avg}}> {{meter.max}}</span>
+                </td>
+              </tr>
+            </table>
+          </uib-tab>
+          <uib-tab heading="All Generated Work Orders">
+              <button type="button" class="btn btn-primary" ng-csv="workOrders" filename="workOrders.csv" csv-header="workOrdersHdr">
+                <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+			  </button>
+            <table class="tabPDC table table-striped table-condensed">
+              <tr>
+                <th>WR #</th>
+                <th>DDB</th>
+                <th>Work Type</th>
+                <th class="wideTd">Comments</th>
+              </tr>
+              <tr class="ng-cloak" ng-repeat="wo in workOrders">
+                <td>{{wo.workRequest}}</td>
+                <td>{{wo.equipId}}</td>
+                <td>{{wo.workType}}</td>
+                <td class="wideTd">{{wo.comments}}</td>
+              </tr>
+            </table>
+          </uib-tab>
+        </uib-tabset>
+      </div>
+        
+    </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <div style="display:none;">
+        <div class="col-md-12 col-sm-12" id="leaflet"></div>
+    </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <script src="../js/other.min.js"></script>
+    <!--<script src="../js/nextgrid.min.js"></script>-->
+    <!--<script src="../js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../js/angular.min.js"></script>
+    <script type="text/javascript" src="../js/angular-animate.min.js"></script>
+    <script src="../js/angular-sanitize.min.js"></script>
+    <script src="../js/ng-csv.min.js"></script>
+    <script type="text/javascript" src="../js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script type="text/javascript" src="../js/underscore.min.js"></script>
+    <script type="text/javascript" src="hvt.js"></script>-->
+</body>
+</html>

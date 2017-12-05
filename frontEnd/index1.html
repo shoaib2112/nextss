@@ -1,0 +1,257 @@
+﻿<!doctype html>
+<html ng-app="nextGrid">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/nextgrid.min.css" />
+  <!--<link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+  <link rel="stylesheet" href="css/leaflet.css" />
+  <link rel="stylesheet" href="css/pdim-style.css" />
+  <link rel="stylesheet" href="css/rzslider.css" />-->
+  <!--<link rel="stylesheet" href="css/googlefonts.css" />-->
+  <!--<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300|Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>-->
+  <!--<link rel="stylesheet" href="css/nextGrid.css" />-->
+  <title>NextGrid</title>
+
+</head>
+<body ng-controller="mapCtrl">
+<div id="header">
+  <a ui-sref="home"><img src="assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo" /></a>
+  <h3>NEXTGrid</h3>
+  <h5>
+      <span id="AppTitle" class="ng-cloak" ng-show="selectionType">
+        <span ng-show="ma">
+          <span class="txt-sky-blue">Management Area </span> {{ma}}
+        </span>
+        <span ng-show="sc">
+          <small class="glyphicon glyphicon-menu-right"></small><span class="txt-sky-blue"> Service Center </span> {{sc}}
+        </span>
+        <span ng-show="sub">
+          <small class="glyphicon glyphicon-menu-right"></small><span class="txt-sky-blue"> Substation </span> {{sub}}
+        </span>
+        <span ng-show="feeder">
+          <small class="glyphicon glyphicon-menu-right"></small><span class="txt-sky-blue"> Feeder </span> {{feeder}}
+        </span>
+      </span>
+  </h5>
+  <div id="btn-bank">
+    <!--<button id="loginBtn" class="btn btn-default" data-toggle="modal" data-target="#loginModal" ng-click="showLogin()" ng-hide="login">
+      <span class="glyphicon glyphicon-log-in" style="margin-right:5px;"></span>Login
+    </button>-->
+    <button id="logoutBtn" class="btn btn-default" data-toggle="modal" data-target="#logoutModal" ng-click="logout()">
+      <span class="glyphicon glyphicon-log-out" style="margin-right:5px;"></span>Log Out
+    </button>
+    <button class="btn btn-success" data-toggle="modal" data-target="#keyModal">
+      <span class="glyphicon glyphicon-info-sign" style="margin-right:5px;"></span>Key
+    </button>
+    <button id="keybt2" class="btn btn-success" ng-click="openMatrixModal()" ng-disabled="!ma">
+      <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>MIT Tables
+    </button>
+    <div ng-include="'/ddMenu.html'" class="left"></div>
+  </div>
+</div>
+<div id="wrapper">
+  <div ng-click="doClick($event)" ng-right-click="doRightClick($event)" style="float:left; padding:0">
+    <div class="col-md-12 col-sm-12" id="leaflet"></div>
+  </div>
+
+  <div class="controlPanel">
+    <div>
+
+      <h4>Select Your Area</h4>
+      <!--<h5>{{selection}} {{sub}} {{ma}}</h5>-->
+      <label for="malist">Management Area:</label>
+      <div class="btn-group" uib-dropdown dropdown-append-to-body>
+        <select class="malist" id="malist" form="mas" ng-change="maSelect()" ng-model="MA">
+          <option value=""></option>
+          <option ng-repeat="a in areas | orderBy:'ma'" value="{{a.ma}}">{{a.ma}}</option>
+        </select>
+      </div>
+
+      <label for="sclist" class="rightlabel">Service Center:</label>
+      <div class="btn-group" uib-dropdown dropdown-append-to-body>
+        <select class="sclist" id="sclist" form="scs" ng-change="scSelect()" ng-model="SC">
+          <option value="" ng-selected="!ma"></option>
+          <option ng-repeat="sc in scs | orderBy:'name' | filter:{ma:ma}" value="{{sc.name}}">{{sc.name}}</option>
+        </select>
+      </div>
+
+    </div>
+    <div>
+      <label for="sublist">Substation:</label>
+      <div class="btn-group" uib-dropdown dropdown-append-to-body>
+        <select class="sublist" id="sublist" form="substation" ng-change="subSelect()" ng-model="SUB">
+          <option value="" ng-selected="!sub" ></option>
+          <option ng-repeat="sub in subs | orderBy:'sub' | filter:(sFilter || {ma:ma})" value="{{sub.sub}}">{{sub.sub}}</option>
+          <!--| filter:(({sc:SC}  -->
+        </select>
+      </div>
+    </div>
+    <div>
+      <label for="search">Search Substation:</label>
+      <input type="text" id="search" ng-model="selected" uib-typeahead="s as sub.sub for sub in subs | filter:$viewValue | limitTo:8"
+             typeahead-on-select="onSelect($item, $model, $label)" typeahead-input-formatter="$item.sub" />
+
+      <br />
+    </div>
+    <div>
+      <label for="feederlist">Feeder:</label>
+      <div class="btn-group" uib-dropdown dropdown-append-to-body>
+        <select class="feederlist" id="feederlist" form="SUB" ng-change="feederSelect()" ng-model="feeder" ng-disabled="!sub">
+          <option value="" ng-selected="!sub"></option>
+          <!--<option ng-repeat="feeder in chosenFeeders | orderBy:feeder" value="{{feeder}}">{{feeder}}</option>-->
+          <option ng-repeat="feeder in feeders |filter:{substation:sub}| orderBy:'f'" value="{{feeder.f}}">{{feeder.f}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div id="inspection">
+      <!-- NEW UI FOR INSPECTION SELECTION -->
+
+      <h4>Select a Date</h4>
+      <div id="dateSelector" class="row" ng-show="inspect=='litInspect' || inspect=='fdrout' || inspect=='mominvest'">
+          <span class="col col-sm-5">
+            <input id="day" type="text" ng-model="oneDate"  placeholder="{{now|date:'MM/dd/yyyy'}}" />
+            <!--<input id="day" type="text" ng-model="oneDay" placeholder="{{now|date:'MM/dd/yyyy'}}" />-->
+          </span>
+        <span class="txt-red col-sm-7" ng-show="!ma">You must select a Management Area</span>
+      </div>
+
+      <h4> Investigate</h4>
+
+      <div id="layers" class="row" style="margin:10px 0 0 0;" ng-show="inspect=='mominvest' ||inspect=='fdrout'">
+        <!--<div class="checkbox col col-sm-12" style="margin-bottom: 0">
+          <input type="checkbox" ng-disabled="!feeder" id="Bus" value="" /><label>Display Bus Level</label><br />
+        </div>-->
+        <!-- Use  checkboxes OR buttons to toggle layers on and off (also toggle 'active' class with buttons)-->
+        <div class="col col-sm-6">
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!sub" id="cbFaults" ng-checked="boxes.faultsChecked" value="" /><label>Fault Maps</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!ma" id="cbLit" value="" /><label>Lightning Day</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!sub" id="cbLitHeat" value="" /><label>Lightning YTD</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!ma" id="cbVines" value="" /><label>Vines</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!ma" id="cbPalms" value="" /><label>Palms &amp; Bamboo</label><br />
+          </div>
+          <!--<div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="cbAFS" value="" /><label>AFS</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="cbFCI" value="" />
+            <label>FCI Operation</label><br />
+          </div>-->
+          <!--<div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="cbBreakerOps" value="" />
+            <label>Breaker Operations</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="cbEcalls" value="" /><label>E-Calls</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="voltageSags" value="" /><label>Voltage Sags</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="SubTxBus" value="" /><label>Sub Tx Bus</label><br />
+          </div>-->
+
+        </div>
+        <div class="col col-sm-6">
+          <!--<div class="checkbox">
+                  <input type="checkbox" id="cbGrid" /><label>Show/Hide Grid</label><br />
+          </div>-->
+
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!ma" id="cbTT" value="" /><label>Trouble Tickets</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!sub" id="cbEL" value="" disabled/><label>Open Equipment Log</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!sub" id="cbCA" value="" /><label>Open Condition Assessment</label><br />
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" ng-disabled="!sub" id="cbMomOut" value="" /><label>Known Momentaries &amp; Feeder Outages</label><br />
+          </div>
+          <!--<div class="checkbox">
+            <input type="checkbox" ng-disabled="true" id="cbLiveSwitch" value="" /><label>Live Switching</label><br />
+          </div>-->
+
+        </div>
+        <!--<button class="btn btn-info btn-sm" disabled>
+          <span class="glyphicon glyphicon-link"></span> Feeder Outage Blog
+        </button>-->
+      </div>
+      <hr />
+      <button class="btn btn-info btn-sm" ng-click="clearUI()" title="Clear all markers from the map">Clear</button>
+    </div>
+    <!-- Close #inspection -->
+
+    <div ng-include="'modals/sideTabs.html'"></div>
+
+  </div>
+</div>
+
+
+<!-- MAP KEY modal -->
+<div class="slide-animate" ng-include="'modals/map-legend.html'"></div>
+<!--<div ng-include="'modals/login.html'"></div>-->
+<!-- MIT Matrix modal -->
+<!--<div class="slide-animate" ng-include="'modals/mit-matrix.html'"></div>-->
+<script src="js/nextgrid.min.js"></script>
+<!--<script src="js/angular.min.js"></script>-->
+<!--<script src="js/angular.js"></script>-->
+<!--<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/blockUI.js"></script>
+<script src="js/angular-animate.min.js"></script>
+<script src="js/underscore.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+<script src="js/leaflet.min.js"></script>
+<script src="js/angular-sanitize.min.js"></script>
+<script src="js/ng-csv.min.js"></script>
+<script src="js/xeditable.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script src="js/d3pie.min.js"></script>
+<script src="js/moment.js"></script>
+<script src="js/rzslider.js"></script>
+<script src="js/notify.min.js"></script>
+<script src="js/mapController.js"></script>
+<script src="js/modalControllers.js"></script>
+<script src="js/DataModel.js"></script>
+<script src="js/drawFunctions.js"></script>
+<script src="js/utilityFunctions.js"></script>
+<script src="js/dirRightClick.js"></script>-->
+
+
+<script type="text/javascript">
+  $( document ).ready( function () {
+    $( "#keybtn" ).click( function () {
+      $( "#keyModal" ).modal( "show" );
+      return false;
+    } );
+  });
+
+  //$("#day").datepicker({
+  //    onSelect: function (dateText, inst) {
+  //        var dateAsString = dateText;
+  //        $scope.oneDate = $(this).datepicker('getDate');
+  //    }
+  //});
+  $( function () {
+    $( "#day" ).datepicker( { defaultDate: 0, maxDate: "1", hideIfNoPrevNext: true } );
+  } );
+
+</script>
+</body>
+</html>

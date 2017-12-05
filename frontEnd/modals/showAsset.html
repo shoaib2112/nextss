@@ -1,0 +1,24 @@
+<div class="modal-header"></div>
+<div class="modal-body">
+    <uib-tabset>
+        <uib-tab heading="Asset">
+            <h3>{{rcRow.id}}</h3>
+            <ul class="mod">
+                <li>{{rcRow.phase}}</li>
+                <li>{{rcRow.type}}:{{rcRow.fplClass}}</li>
+                <li>{{rcRow.assetType}}</li>
+                <li>{{rcRow.fplId}}</li>
+                <li>========================</li>
+                <li>cursor {{latX | number:3}},{{longY | number:3}}</li>
+                <li>box at {{box.x | number:3}},{{box.y | number:3}}</li>
+                <li>zoom is {{zoomLevel}}</li>
+            </ul>
+        </uib-tab>
+        <uib-tab heading="Not Used"></uib-tab>
+        <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">{{tab.content}}</uib-tab>
+    </uib-tabset>
+    </div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()">OK</button>
+    <button type="button" class="btn btn-warning" ng-click="close()">Cancel</button>
+</div>

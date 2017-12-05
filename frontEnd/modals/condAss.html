@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3>Condition Assessment Items for {{cond[0].FEEDER_NUMBER}}</h3>
+    <!--THINGSSS and stuff!!!-->
+</div>
+<div class="modal-body">
+    <table class="tabPDC">
+        <tr>
+            <th>Object</th>
+            <th>Issue</th>
+            <th>Severity</th>
+        </tr>
+        <tr ng-repeat="ca in cond" class="mod">
+            <td>{{ca.OBJECT_TYPE}}</td>
+            <td>{{ca.ISSUE}}</td>
+            <td>{{ca.SEVERITY}}</td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-csv="cond" filename="conditionAssessment.csv" csv-header="condKeys">Get CSV</button>
+    <button type="button" class="btn btn-warning" ng-click="close()">Cancel</button>
+</div>

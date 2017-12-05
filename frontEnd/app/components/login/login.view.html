@@ -1,0 +1,27 @@
+<div id="header">
+    <!--<div id="login-msg" class="center txt-center" >Login message level here</div>-->
+</div><!-- Close #header -->
+<div id="wrapper" class="fill grey1" style="height:95%">
+    <form ng-submit="login()" class="login-container">
+        <div id="loginModalBody" class="modal-body txt-center">
+            <img src="images/FPL_blue.png" class="logo" />
+            <h2>NEXTGrid</h2>
+            <!--<p>Login to receive alerts</p>-->
+            <span id="loginError" class="txt-red"></span>
+            <hr />
+            <input id="slid" type="text" class="form-group col col-xs-12 form-control" placeholder="SLID" ng-model="usr.slid" />
+            <input id="passwordField" type="password" class="form-group col col-xs-12 form-control" placeholder="Password" ng-model="usr.password" />
+            <button type="submit" class="btn btn-primary col col-xs-12 form-control" id="pword">
+                <strong>Login</strong>
+            </button>
+            <!--<button type="button" class="btn btn-default col col-xs-12 form-control" data-dismiss="modal" ng-click="loginClose()">
+              <strong>Proceed without Login</strong>
+            </button>-->
+        </div>
+        <!--<div class="modal-footer">
+          <button type="button" class="btn btn-default col col-xs-12 form-control" data-dismiss="modal">
+            <strong>Close</strong>
+          </button>
+        </div>-->
+    </form>
+</div>

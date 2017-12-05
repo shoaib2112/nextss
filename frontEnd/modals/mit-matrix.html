@@ -1,0 +1,448 @@
+﻿<!--<div class="modal-header"><b>Edit Meter</b></div>-->
+
+      <div id="mitModal" class="modal-header">
+        <button class="close" type="button" ng-click="matrixClose()" aria-hidden="true">&times;</button>
+        <h5 class="modal-title left" style="margin-right:20px;">
+          MIT Chart
+        </h5>
+
+        <div class="select-parent" for="malist" style="width:auto;">
+          Management Area:
+          <select class="malist" id="MITmalist" form="mas" ng-change="maSelect()" ng-model="MA">
+            <option value=""></option>
+            <option ng-repeat="a in areas | orderBy:'ma'" value="{{a.ma}}">{{a.ma}}</option>
+          </select>
+        </div>
+
+        <div class="select-parent"  for="sublist" style="width:auto;">
+          Substation:
+          <select class="sublist" id="MITsublist" form="MA" ng-change="subSelect()" ng-model="SUB" style="min-width:80px;">
+            <option value=""></option>
+            <option ng-repeat="sub in subs | orderBy:sub.sub | filter:{ma:ma}" value="{{sub.sub}}">{{sub.sub}}</option>
+          </select>
+        </div>
+        <div class="select-parent" for="feederlist" style="width:auto;">
+          Feeder:
+          <select class="feederlist" id="MITfeederlist" form="SUB" ng-change="feederSelect()" ng-model="feeder">
+            <option value=""></option>
+            <!--<option ng-repeat="feeder in chosenFeeders | orderBy:feeder" value="{{feeder}}">{{feeder}}</option>-->
+            <option ng-repeat="feeder in feeders | filter:{ma:ma}| filter:{substation:sub}| orderBy:'f'" value="{{feeder.f}}">{{feeder.f}}</option>
+          </select>
+        </div>
+
+        <a class="btn btn-info btn-sm" ng-href="#" ng-click="clearMIT();">Clear</a>
+
+        <div class="col-md-4 right">
+          <label> Filter by text: </label>
+          <input id="mitTxtFilter" type="text" ng-model="mitTxtFilter" placeholder="Filter by text" />
+        </div>
+        <!--<div class="col-md-2 right">
+              <label style="width:auto"><input type='checkbox' ng-model="hide0" /> Hide 0 M today: </label>
+      </div>-->
+      </div>
+      <div class="modal-body">
+        <!--style="overflow-y:hidden"-->
+        <ul class="nav nav-tabs" id="k">
+          <!-- tabs -->
+          <li id="mitTabLink" class="active">
+            <a href="#mitTable" ng-click="changeMIT('matrix')">
+              <span class="glyphicon stats"> </span>&nbsp;MIT Matrix
+            </a>
+          </li>
+          <li id="mitIRLink">
+            <a href="#mitInvReport" ng-click="changeMIT('investigation')">
+              <!-- data-toggle="tab"  -->
+              <span class="glyphicon glyphicon-dashboard"> </span>&nbsp;Investigation Report
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content" id="mitContent">
+          <div class="tab-pane fade active in" id="mitTable" active="mitTable">
+            <div class=" panel panel-primary" style="overflow-y:auto; min-height:375px;max-height:450px;">
+              <div class="panel-heading">
+                <label class='checkbox-inline bg-lilac' style="width: 130px;"><input type='checkbox' ng-model='mitReliStats' value='' ng-checked="mitReliStats" aria-label='Toggle ngShow' ng-init="mitReliStats=true"><span>Reliability Stats</span></label>
+                <label class='checkbox-inline bg-blue'><input type='checkbox' ng-model='mitProt' value='' ng-checked="mitProt" aria-label='Toggle ngShow' ng-init="mitProt=true"><span>Protection</span></label>
+                <!--  try to make protection on by default, without off setting checkbox -->
+                <label class='checkbox-inline nee-green'><input type='checkbox' ng-model='mitVeg' value='' aria-label='Toggle ngShow'><span>Vegetation</span></label>
+                <label class='checkbox-inline bg-blue-violet'><input type='checkbox' ng-model='mitSmartGrid' value='' aria-label='Toggle ngShow'><span>SmartGrid</span></label>
+                <label class='checkbox-inline bg-drk-lilac' style="width: 150px;"><input type='checkbox' ng-model='mitReliability' value='' aria-label='Toggle ngShow'><span>Reliability Programs</span></label>
+                <label class='checkbox-inline fpl-grey'><input type='checkbox' ng-model='mitGen' value='' aria-label='Toggle ngShow'><span>General</span></label>
+              </div>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>MA</th>
+                    <th ng-click="mitKey('SUBSTATION')">
+                      Substation
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='SUBSTATION'"></span>
+                      <span ng-hide="mitSort.sortMit!='SUBSTATION'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+                    <th ng-click="mitKey('FDR_NUM')">
+                      Feeder
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='FDR_NUM'"></span>
+                      <span ng-hide="mitSort.sortMit!='FDR_NUM'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+                    <th ng-click="mitKey('MCOUNT')">
+                      M Today
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='MCOUNT'"></span>
+                      <span ng-hide="mitSort.sortMit!='MCOUNT'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+                    <th ng-click="mitKey('FDR_M_YTD')" ng-show='mitReliStats' class='bg-lilac'>
+                      M YTD
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='FDR_M_YTD'"></span>
+                      <span ng-hide="mitSort.sortMit!='FDR_M_YTD'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+                    <th ng-click="mitKey('FDR_M_12MOE')" ng-show='mitReliStats' class='bg-lilac'>
+                      M 12 MOE
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='FDR_M_12MOE'"></span>
+                      <span ng-hide="mitSort.sortMit!='FDR_M_12MOE'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+                    <th ng-show='mitReliStats' class='bg-lilac'>Int FDR YTD</th>
+                    <th ng-show='mitReliStats' class='bg-lilac'>Int  FDR 12 MOE</th>
+                    <th ng-show='mitReliStats' class='bg-lilac'>Int Lat YTD</th>
+                    <th ng-show='mitReliStats' class='bg-lilac'>Int Lat 12 MOE</th>
+                    <th ng-show='mitProt' class='bg-blue'>Relay</th>
+                    <th ng-show='mitProt' class='bg-blue'>GI / GX</th>
+                    <th ng-show='mitProt' class='bg-blue'>GI / GX Change</th>
+                    <th ng-show='mitProt' class='bg-blue'>Toggle</th>
+                    <th ng-show='mitProt' class='bg-blue'>FIS</th>
+                    <th ng-show='mitVeg' class='nee-green'>Trim FDR</th>
+                    <th ng-show='mitVeg' class='nee-green'>Trim LAT</th>
+                    <th ng-show='mitSmartGrid' class='bg-blue-violet'>FCI’s</th>
+                    <th ng-show='mitSmartGrid' class='bg-blue-violet'>cFCIs</th>
+                    <th ng-show='mitSmartGrid' class='bg-blue-violet'>AFS</th>
+                    <th ng-show='mitSmartGrid' class='bg-blue-violet'>ALS</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>Harden Date</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>Thermo Date</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>Visual insp Date</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>OHLI Insp</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>PF</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>Pole Insp</th>
+                    <th ng-show='mitReliability' class='bg-drk-lilac'>PSC cust </th>
+                    <th ng-show='mitGen' class='fpl-grey'>Oh FDR miles</th>
+                    <th ng-show='mitGen' class='fpl-grey'>OH Lat miles</th>
+                    <th ng-click="mitKey('CUSTOMERS')" ng-show='mitGen' class='fpl-grey'>
+                      Cust
+                      <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortMit!='CUSTOMERS'"></span>
+                      <span ng-hide="mitSort.sortMit!='CUSTOMERS'">
+                        <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span><span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                      </span>
+                    </th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="m in mitmatrix
+				 | orderBy:mitSort.sortMit:mitSort.reverse |
+				filter: {AREA:ma}| filter: {SUBSTATION:mitSub} | filter: {FDR_NUM:feeder}| filter:mitTxtFilter
+			|  startFrom:((currentPage-1)*8) | limitTo:8">
+                    <!--          startFrom:(currentPage-1)*8 | limitTo:8-->
+                    <td>{{m.AREA}}</td>
+                    <td>{{m.SUBSTATION}}</td>
+                    <td>{{m.FDR_NUM}}</td>
+                    <td>{{m.MCOUNT}}</td>
+                    <td ng-show='mitReliStats'>{{ m.FDR_M_YTD }}</td>
+                    <td ng-show='mitReliStats'>{{ m.FDR_M_12MOE }}</td>
+                    <td ng-show='mitReliStats'>{{ m.FDR_N_YTD }}</td>
+                    <td ng-show='mitReliStats'>{{ m.INTERRUPTIONS }}</td>
+                    <td ng-show='mitReliStats'>{{ m.LAT_N_YTD }}</td>
+                    <td ng-show='mitReliStats'>{{ m.LAT_N_12MOE }}</td>
+                    <td ng-show='mitProt'>{{ m.RELAYTYPE }}</td>
+                    <td ng-show='mitProt'>{{ m.GIGX }}</td>
+                    <td ng-show='mitProt'>{{ m.gigx_change }}</td>
+                    <td ng-show='mitProt'>{{ m.toggle }}</td>
+                    <td ng-show='mitProt'>{{ m.FIS }}</td>
+                    <td ng-show='mitVeg'>{{ m.VEG_FEEDER }}</td>
+                    <td ng-show='mitVeg'>{{ m.VEG_LATERAL }}</td>
+                    <td ng-show='mitSmartGrid'>{{ m.fci }}</td>
+                    <td ng-show='mitSmartGrid'>{{ m.cfci }}</td>
+                    <td ng-show='mitSmartGrid'>{{ m.AFS }}</td>
+                    <td ng-show='mitSmartGrid'>{{ m.ALS }}</td>
+                    <td ng-show='mitReliability'>{{ m.HARDENING |limitTo:4:6}}</td><!-- To show year only add |limitTo:4:6 -->
+                    <td ng-show='mitReliability'>{{ m.LAST_THERMOINSPECTION | date:'yyyy' }}</td>
+                    <td ng-show='mitReliability'>{{ m.LAST_INSPECTIONDATE | date:'yyyy' }}</td>
+                    <td ng-show='mitReliability'>{{ m.THERMO }}</td>
+                    <td ng-show='mitReliability'>{{ m.PRIORITY_FDR }}</td>
+                    <td ng-show='mitReliability'>{{ m.POLE }}</td>
+                    <td ng-show='mitReliability'>{{ m.psc }}</td>
+                    <td ng-show='mitGen'>{{ m.FEEDEROH | number:2 }}</td>
+                    <td ng-show='mitGen'>{{ m.LATERALOH | number:2}}</td>
+                    <td ng-show='mitGen'>{{ m.CUSTOMERS }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="mitInvReport">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <div class="row">
+                  <span class="col-sm-4">Investigation Report for Feeder# {{feeder}}</span>
+                  <!-- Hidden for the time being -->
+                  <span class="col-sm-6 hide">
+                    Show |
+                    <button class="btn btn-success btn-short active" ng-click="">Year to Date</button>
+                    <button class="btn btn-success btn-short disbaled" ng-click="" disabled>12 MOE</button>
+                    <button class="btn btn-success btn-short disbaled" ng-click="" disabled>24 MOE</button>
+                    <button class="btn btn-success btn-short disbaled" ng-click="" disabled>5 Years</button>
+                  </span>
+                </div>
+              </div>
+              <div class="panel-body" style="overflow: auto; max-height: 380px;">
+                <!--<span>
+                      Need to layout Table: based on <a href="http://dpdcapps/DPDC/MomentaryMatrixDetailed.jsp">Momentary research matrix</a>.
+                      Requires Feeder Selction
+              </span>-->
+                <div ng-show="!feeder">
+                  <h4>No feeder selected, please select a Feeder above.</h4>
+                </div>
+                <div ng-hide="!feeder">
+
+                  <div>
+                    <table class="table table-condensed">
+                      <tbody>
+                        <tr>
+                          <th>Feeder N YTD</th>
+                          <th>Feeder N 12MOE</th>
+                          <th>Lateral N YTD</th>
+                          <th>Lateral N 12MOE</th>
+                          <th>CEMI YTD</th>
+                          <th>CEMI 12MOE</th>
+                          <th>Momentaries YTD</th>
+                          <th>Momentaries 12MOE</th>
+                        </tr>
+                        <tr class="teal1" ng-repeat="mx in mitmatrix | filter: {FDR_NUM:feeder}">
+                          <td>{{ mx.FDR_N_YTD }}</td>
+                          <td>{{ mx.INTERRUPTIONS }}</td>
+                          <td>{{ mx.LAT_N_YTD }}</td>
+                          <td>{{ mx.LAT_N_12MOE }}</td>
+                          <!--<td>{{mx.int_fdr_ytd}}</td>
+                        <td>{{mx.int_fdr_12moe}}</td>
+                        <td>{{mx.int_lat_ytd}}</td>
+                        <td>{{mx.int_lat_12moe}}</td>-->
+                          <!-- CMI Not currently in scope -->
+                          <td>{{ cemi.ytd }}</td>
+                          <td>{{ cemi.twmoe }}</td>
+
+                          <td>{{mx.FDR_M_YTD}}</td>
+                          <td>{{mx.FDR_M_12MOE}}</td>
+                        </tr>
+                        <tr ng-show="(mitmatrix | filter: {FDR_NUM:feeder}).length<1">
+                          <td colspan="8" align="center">No MIT Matrix data for this Feeder</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+
+                    <table class="table table-striped table-condensed">
+
+                      <!-- ng-click="mitSort.sortIR='SUBSTATION';mitSort.reverse=!mitSort.reverse" -->
+                      <thead>
+                        <tr>
+                          <th rowspan="2">Edit</th>
+                          <th rowspan="2" ng-click="mitIrKey('date')" style="min-width:60px;">
+                            Date
+                            <
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='date'"></span>
+                            <span
+                            <span ng-hide="mitSort.sortIR!='date'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                          <th rowspan="2" ng-click="mitIrKey('event_dttm')">
+                            SCADA Time
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='event_dttm'"></span>
+                            <span ng-hide="mitSort.sortIR!='event_dttm'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                          <th rowspan="2" ng-click="mitIrKey('fault_map')">
+                            Fault Map?
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='fault_map'"></span>
+                            <span ng-hide="mitSort.sortIR!='fault_map'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                          <th rowspan="2" ng-click="mitIrKey('status_code')" style="min-width: 90px;">
+                            Investigation Status
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='status_code'"></span>
+                            <span ng-hide="mitSort.sortIR!='status_code'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                          <th rowspan="2" class='bg-blue'>Comments</th>
+                          <th rowspan="2" class='bg-blue'>Cause</th><!-- DropdownList  -->
+                          <th rowspan="2" class='bg-blue'>TLN / FPLID - Cause Location</th>
+                          <th colspan="3" class='nee-green'>TCMS</th>
+                          <th colspan="3" class='bg-drk-lilac'>Weather</th>
+                          <th rowspan="2" ng-click="mitIrKey('wr_num')" style="min-width: 86px;">
+                            Active TT#
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='wr_num'"></span>
+                            <span ng-hide="mitSort.sortIR!='wr_num'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                          <th rowspan="2" ng-click="mitIrKey('wr_status')">
+                            TT# Status
+                            <span class="glyphicon glyphicon-sort" ng-show="mitSort.sortIR!='wr_status'"></span>
+                            <span ng-hide="mitSort.sortIR!='wr_status'">
+                              <span class="glyphicon glyphicon-sort-by-attributes" ng-show="!mitSort.reverse"></span>
+                              <span class="glyphicon glyphicon-sort-by-attributes-alt" ng-hide="!mitSort.reverse"></span>
+                            </span>
+                          </th>
+                            <th ng-show="false"></th> 
+                        </tr>
+                        <tr>
+                          <th class='nee-green'>Ticket #</th>
+                          <th class='nee-green'>Cause Code</th>
+                          <th class='nee-green'>Ticket Type</th>
+                          <th class='bg-drk-lilac'>Rain</th>
+                          <th class='bg-drk-lilac'>Lightning Match</th>
+                          <th class='bg-drk-lilac'>Wind</th>
+                          <!--<th class='bg-drk-lilac'>Gusts</th>-->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="m in momsIR | orderBy:mitSort.sortIR:mitSort.reverse | filter:{fdr_num:feeder} | filter:mittxtfilter | startFrom:(currentpage-1)*6 | limitTo:6">
+                          <!-- <tr ng-repeat=" m in momsir | orderby:mitsort.sortir:mitsort.reverse | filter:{fdr_num:feeder} | filter:mittxtfilter | startfrom:(currentpage-1)*6 | limitTo:6"> -->
+                          <td>
+                            <!-- Edit Buttons -->
+                            <form editable-form name="momIRform" class="" style="padding:0; width: 40px;" onbeforesave="saveMom(m.rid, m.comments, m.tln, m.cause_code)">
+                              <button data-toggle="tooltip" title="Save" type="submit" class="btn btn-success btn-tiny left" ng-disabled="momIRform.$waiting" ng-show="momIRform.$visible">
+                                <span class="glyphicon glyphicon-ok"></span>
+                              </button>
+                              <!--<a href="#"  class="left">-->
+                              <button data-toggle="tooltip" title="Cancel" ng-show="momIRform.$visible" type="button" ng-disabled="momIRform.$waiting" ng-click="momIRform.$cancel()" class="btn btn-danger btn-tiny left">
+                                <span class="glyphicon glyphicon-remove"></span>
+                              </button>
+                              <!--</a>-->
+                            </form>
+
+                            <span ng-hide="momIRform.$visible">
+                              <button class="btn btn-info btn-tiny" ng-click="momIRform.$show()">
+                                <span class="glyphicon glyphicon-edit" ng-click=""></span>
+                              </button>
+                            </span>
+
+
+                          </td>
+                          <td>{{m.date}}</td><!-- add in | date:'shortDate'-->
+                          <td>{{m.event_dttm | limitTo:8:11}}</td> <!-- add in | date:'HH:mm:ss' OR  limitTo:8:11 -->
+                          <td>
+                            <!-- Fault Map -->
+                            <span ng-show="m.fault_map && m.fault_map!==''"><span class="glyphicon glyphicon-globe"></span> {{m.fault_map}}</span>
+                            <span ng-show="!m.fault_map || m.fault_map==''">No </span> <!--add to span with "yes" ng-show="mapGen=='yes'"  -->
+                          </td>
+
+
+                          <td>
+                            <!-- Inv Status Editable Drop Down-->
+                            <span>{{m.status_code}}</span>
+                          </td>
+
+
+                          <td>
+                            <!-- Comments Editable Text Area-->
+                            <span ng-hide="momIRform.$visible">{{m.comments}}</span>
+                            <span ng-show="momIRform.$visible" class="" editable-textarea="m.comments" e-name="comments" e-form="momIRform" type="text"></span>
+
+                          </td>
+                          <td>
+                            <!-- Cause -->
+                            <span ng-hide="momIRform.$visible"> {{m.cause_code}}</span>
+                            <!-- Cause code is a number, need the text version of the code -->
+                            <span ng-show="momIRform.$visible" editable-select="m.cause_code" e-name="cause" e-form="momIRform" e-ng-options="c for c in tlnCauses"></span>
+                          </td>
+
+                          <td>
+                            <!-- TLN Cause Loc -->
+                            <span ng-hide="momIRform.$visible">{{ m.tln }}</span>
+                            <span ng-show="momIRform.$visible" class="" editable-text="m.tln" e-name="tln" e-form="momIRform" type="text"></span>
+
+
+                            <!-- TCMS -->
+                          <td>{{ m.trbl_tckt_num }} </td>
+                          <td>{{ m.irpt_caus_code }}</td>
+                          <td>{{ m.tckt_type_code }}</td>
+                          <!-- Weather -->
+                          <td>{{ getWeather('R', m.weather )}}</td>
+                          <td>{{ getWeather('L', m.weather )}}</td>
+                          <td>{{ getWeather('W', m.weather )}}</td>
+                          <!--<td></td>-->
+                          <!-- Active WR -->
+                          <td>
+                            <span ng-show="m.wr_num">{{m.wr_num}}</span>
+                            <span ng-show="!m.wr_num"><button class="btn btn-info btn-short" ng-click="createTT()">Create TT</button></span>
+                          </td>
+                          <td>{{m.wr_status}}</td>
+                          <td ng-show="false">{{ m.rid }}</td>  <!-- This is our pseudo primary key -->                             
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!-- close body -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- Paging controls for the  MIT Matrix -->
+          <div ng-show="showMitBtns=='matrix'">
+            <span class="col-xs-1 txt-left"> {{(mitmatrix | filter: {AREA:ma}| filter: {SUBSTATION:mitSub} | filter: {FDR_NUM:feeder}| filter:mitTxtFilter).length}} results </span>
+            <uib-pagination class="col-xs-6"
+                            total-items="(mitmatrix | filter: {AREA:ma}| filter: {SUBSTATION:mitSub} | filter: {FDR_NUM:feeder}| filter:mitTxtFilter).length"
+                            ng-model="currentPage" max-size="7" boundary-links="true" items-per-page="8"
+                            ng-hide="(mitmatrix | filter: {AREA:ma}| filter: {SUBSTATION:sub} | filter: {FDR_NUM:feeder}| filter:mitTxtFilter).length<=8">
+            </uib-pagination>
+
+          </div>
+          <!-- Paging controls for Investigation report -->
+          <div ng-show="showMitBtns=='investigation'">
+            <span class="col-xs-1 txt-left"> {{(momsIR | filter:{fdr_num:feeder} | filter:mittxtfilter).length}} results </span>
+            <uib-pagination class="col-xs-6"
+                            total-items="(momsIR | filter:{fdr_num:feeder} | filter:mittxtfilter).length"
+                            ng-model="currentPage" max-size="7" boundary-links="true" items-per-page="6"
+                            ng-hide="(momsIR | filter:{fdr_num:feeder} | filter:mittxtfilter).length<=6">
+            </uib-pagination>
+          </div>
+          <div class="col-sm-4 right">
+            <button type="button" class="btn btn-primary" ng-show="showMitBtns=='matrix'"
+                    ng-csv="mitmatrix" filename="MIT_Matrix_{{ma}}_{{now|date:'MM-dd-yy'}}.csv" csv-header="['substation','fdr_num','relay_type','customers','mom_ystd','nine_160days_mom_cnt','frtn_220days_mom_cnt','ytd','twlv_moe','tln','cause_code','event_info','fdr_n_ystd','lat_n_ystd','comments','date','voltage','miles','ma','status_code','rid','weather','accuracy','file_upload','investigation_wr','follow_up_wr','momstoday']">
+              <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+            </button>
+            <button type="button" class="btn btn-primary" ng-show="showMitBtns=='investigation'"
+                    ng-csv="momsIR | filter:{feeder_num:feeder}" filename="MIT_Investigation_Report_{{ma}}_Feeder-{{feeder}}_{{now|date:'MM-dd-yy'}}.csv"
+                    csv-header="['feeder number','datetime', 'fault map', 'investigation status', 'comments', 'TLN cause Location', 'cause', 'TCMS ticket', 'TCMS Cause Code', 'TCMS Ticket Type', 'rain','lightning', 'lightning match', 'wind', 'gusts', 'active WR', 'WR status']">
+              <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+            </button>
+            <button type="button" class="btn btn-success" ng-click="matrixClose()">Close</button>
+          </div>
+        </div>
+      </div>
+      <!--<script id="template/pagination/pagination.html" type="text/ng-template">
+      <ul class="pagination">
+        <li ng-if="boundaryLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(1)" title="First Page"> <span class="glyphicon glyphicon-fast-backward"></span></a></li>
+        <li ng-if="directionLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(page - 1)" title="Previous Page"><span class="glyphicon glyphicon-backward"></span></a></li>
+        <li ng-repeat="page in pages track by $index" ng-class="{active: page.active}"><a href ng-click="selectPage(page.number)">{{page.text}}</a></li>
+        <li ng-if="directionLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(page + 1)" title="Next Page"><span class="glyphicon glyphicon-forward"></span></a></li>
+        <li ng-if="boundaryLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(totalPages)" title="Last Page"><span class="glyphicon glyphicon-fast-forward"></span> </a></li>
+      </ul>
+    </script>-->

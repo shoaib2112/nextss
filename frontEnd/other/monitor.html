@@ -1,0 +1,119 @@
+﻿<html ng-app="monApp">
+<head>
+<title>Monitor Data Movement</title>
+    <link rel="stylesheet" href="../css/nextgrid.min.css" />
+    <!--<script src="../js/jquery-2.1.4.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/angular-animate.min.js"></script>
+    <script src="../js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="./monitor.js"></script>-->
+    <!--<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/pdim-style.css">
+    <link rel="stylesheet" href="../css/main.css">-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+	.tab-content .table-condensed {
+        font-size: 12px; 
+      }
+
+        .tab-content .table-condensed th {
+          font-size: 14px;
+          text-align: center;
+		  vertical-align: middle;
+        }
+    .table > tbody > tr > td {
+	  vertical-align: middle;
+    }
+	  #btn-bank {
+		  float: right;
+		  position: absolute;
+		  right: 20px;
+		  top: 15px;
+	  }
+	</style>
+</head>
+<body ng-controller="datamonCtrl">
+<div id="header">
+    <img src="../assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo">
+    <h3>NextGrid</h3>
+    <h5><span id="AppTitle"></span></h5>
+    <div id="btn-bank">
+        <!--<button class="btn btn-success" style="margin-left:5px;">
+        <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>
+          <a href="/nextGrid.html" style="color:#fff; text-decoration:none;">Map</a>
+        </button>-->
+        <div ng-include="'/ddMenu.html'"></div>
+    </div>
+</div>
+  <div class="row" id="wrapper" style="max-width:95%" ng-controller="datamonCtrl">
+    <h3>Monitor Data Movement</h3>
+      <div style="overflow:auto;">
+      <uib-tabset>
+        <uib-tab heading="C# Services">
+
+        <table class="tabPDC table table-striped table-condensed">
+          <tr>
+            <th><a href="#" ng-click="myOrder='id'; ud = !ud">ID</a></th>
+            <th>Name</th>
+            <th>Tech</th>
+            <th><a href="#" ng-click="myOrder='hostName'; ud = !ud">Server</a></th>
+            <th><a href="#" ng-click="myOrder='lastRunTime'; ud = !ud">Last Run Date/Time</a></th>
+            <th>Description</th>
+            <th>Target Tables</th>
+            <th>Source DB/Files</th>
+            <th>Source Table(s)</th>
+            <th>Source Type</th>
+            <th><a href="#" ng-click="myOrder='message'; ud = !ud">Status Message</a></th>
+          </tr>
+          <tr ng-repeat="row in rows | orderBy: myOrder: ud" ng-class="{red: row.red}">
+              <div class="ng-cloak">
+                  <td>{{row.id}}</td>
+                  <td>{{row.name}}</td>
+                  <td>{{row.tech}}</td>
+                  <td>{{row.hostName}}</td>
+                  <td>{{row.lastRunTime | date:'medium'}}</td>
+                  <td>{{row.description}}</td>
+                  <td>{{row.tablesUpdated}}</td>
+                  <td>{{row.sourceDbFiles}}</td>
+                  <td>{{row.sourceTables}}</td>
+                  <td>{{row.dbFileType}}</td>
+                  <td>{{row.message}}</td>
+              </div>
+          </tr>
+        </table>
+      </uib-tab>
+      <uib-tab heading="Java Services">
+        <table class="tabPDC table table-striped table-condensed">
+          <tr>
+            <th><a href="#" ng-click="myOrder='id'; ud = !ud">ID</th>
+            <th>Name</th>
+            <th>Tech</th>
+            <th><a href="#" ng-click="myOrder='running_on_server'; ud = !ud">Server</th>
+            <th><a href="#" ng-click="myOrder='ts_check_date'; ud = !ud">Last Run Date</th>
+            <th>Description</th>
+          </tr>
+          <tr ng-repeat="row2 in rows2 | orderBy: myOrder: ud">
+            <td>{{row2.id}}</td>
+            <td>{{row2.tx_application_name}}</td>
+            <td>Java</td>
+            <td>{{row2.running_on_server}}</td>
+            <td>{{row2.ts_check_date | date:'medium'}}</td>
+            <td>{{row2.tx_check_notes}}</td>
+          </tr>
+        </table>
+      </uib-tab>
+    </uib-tabset>
+    </div>
+  </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <div style="display:none;">
+        <div class="col-md-12 col-sm-12" id="leaflet"></div>
+    </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <script src="../js/other.min.js"></script>
+    <!--<script src="../js/nextgrid.min.js"></script>-->
+</body>
+</html>

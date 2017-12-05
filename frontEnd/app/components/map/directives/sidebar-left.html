@@ -1,0 +1,786 @@
+<!--Side bars for Momentaries-->
+
+<!--<div class="map-container">-->
+<div id="sidebar-container" >
+    <!--LEFT SIDEBAR-->
+    <div class="row-fluid map-overlap sb-left full-height" ng-class="{sbCollapsed : !MoMCountIsActive && !InvestigationIsActive && !mapKeyIsActive}">
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <!--default open with MOM tab open-->
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="right" title="Momentaries YTD">
+                    <input type="checkbox" id="MoMCountCB" ng-model="MoMCountIsActive" ng-init="MoMCountIsActive=true" ng-change="InvestigationIsActive=false; mapKeyIsActive=false" checked>
+                    <label for="MoMCountCB"><i class="glyphicon glyphicon-home"></i></label>
+                </li>
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="right" title="Investigations">
+                    <input type="checkbox" id="cloudCB" ng-model="InvestigationIsActive" ng-change="MoMCountIsActive=false; mapKeyIsActive=false">
+                    <label for="cloudCB"><i class="glyphicon glyphicon-check"></i></label>
+                </li>
+            </ul>
+            <ul role="tablist">
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="right" title="Map Key">
+                    <input type="checkbox" id="mapKeySelect" ng-model="mapKeyIsActive" ng-change="InvestigationIsActive=false; MoMCountIsActive=false"
+                           tooltip-placement="top" uib-tooltip="Test Here" tooltip-popup-delay='300'>
+                    <label for="mapKeySelect"><i class="glyphicon glyphicon-info-sign"></i></label>
+                </li>
+            </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="sidebar-content tab-content">
+            <div role="tabpanel" class="sidebar-panel tab-pane" id="MoMCount" ng-class="{active:MoMCountIsActive }">
+                <div class="sidebar-header">
+                    Momentaries <span ng-hide="areaData.selectedManagementArea._id !== 'All'"> by MA</span>
+                    <span ng-hide="!areaData.selectedManagementArea || areaData.selectedManagementArea._id == 'All' ">in {{areaData.mostSpecificSelectionIdentifier}}</span>
+                    <span class="sidebar-close" ng-click="MoMCountIsActive=false"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <div class="sb-section">
+<!--All FPL-->
+                    <div ng-hide="areaData.selectedManagementArea._id !== 'All'">
+                        <div>
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>All FPL</td>
+                                        <th>YTD Count</th>
+                                        <th>YTD Percent</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Known</td>
+                                        <td class="txt-center">{{momCountData.countCompareAll.knownYtd | number:0 }}</td>
+                                        <td class="txt-center">{{(momCountData.countCompareAll.knownYtd/
+                                            (momCountData.countCompareAll.knownYtd+momCountData.countCompareAll.unknownYtd))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Unknown</td>
+                                        <td class="txt-center">{{momCountData.countCompareAll.unknownYtd | number:0}}</td>
+                                        <td class="txt-center">{{(momCountData.countCompareAll.unknownYtd/
+                                            (momCountData.countCompareAll.knownYtd+momCountData.countCompareAll.unknownYtd))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h5>Unknown Momentaries</h5>
+                        <table class="table txt-center table-striped table-condensed table-hover" style="width:100%" ng-hide="areaData.selectedManagementArea._id !== 'All'">
+                            <thead>
+                            <tr> 	<th>	MA	</th><th>	YTD	</th><th>	12 MoE	</th><th>YTD Fdr Tx</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="m in momCountData.maCounts | orderBy:'-YTD'" ng-click="managementAreaSelectedFromList(m)">
+
+                                <td >	{{m._id}}</td>
+                                <td ng-class="{'bg-red': (m.YTD > (highMomNumMA*.8)),
+                                'bg-orange': (m.YTD > (highMomNumMA*.6) && m.YTD  <= (highMomNumMA*.8)),
+                                'bg-yellow': (m.YTD > (highMomNumMA*.4) && m.YTD  <= (highMomNumMA*.6)),
+                                'nee-green': (m.YTD > (highMomNumMA*.2) && m.YTD <= (highMomNumMA*.4)),
+                                'fpl-blue' : (m.YTD <= (highMomNumMA*.2))
+                                }">	<strong>{{m.YTD}}</strong>	</td>
+                                <td>	{{m.twelvemoe}}	</td>
+                                <td>{{m.fdrTicketYTD || 0}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+<!--For selected MA-->
+                   <div ng-hide="!areaData.selectedManagementArea || areaData.selectedManagementArea._id == 'All' || areaData.selectedSubstation">
+                        <div>
+                            <!--<strong>Known Momentaries YTD:  </strong>{{areaData.selectedManagementArea.mYTDknown}} <br />-->
+                            <!--<strong>Unknown Momentaries YTD:</strong> {{areaData.selectedManagementArea.mYTD}}-->
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <td>Moms In {{areaData.selectedManagementArea._id}}</td>
+                                    <th>YTD Count</th>
+                                    <th>YTD Percent</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Known</td>
+                                    <td class="txt-center">{{areaData.selectedManagementArea.mYTDknown | number:0 }}</td>
+                                    <td class="txt-center">{{(areaData.selectedManagementArea.mYTDknown/
+                                        (areaData.selectedManagementArea.mYTDknown+areaData.selectedManagementArea.mYTD))
+                                        *100| number:1}}%</td>
+                                </tr>
+                                <tr>
+                                    <td>Unknown</td>
+                                    <td class="txt-center">{{areaData.selectedManagementArea.mYTD | number:0}}</td>
+                                    <td class="txt-center">{{(areaData.selectedManagementArea.mYTD/
+                                        (areaData.selectedManagementArea.mYTDknown+areaData.selectedManagementArea.mYTD))
+                                        *100| number:1}}%</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                       <h5>Unknown Momentaries</h5>
+                        <table class="table txt-center table-striped table-condensed table-hover" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>	Sub	</th>
+                                <th>	SVC	</th>
+                                <th>	YTD	</th>
+                                <th>	12 MoE	</th>
+                                <th>YTD Fdr Tx</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="s in areaData.momCountSub | orderBy:'-mYTD' | limitTo:16" ng-click="substationSelectedFromList(s)" >
+                                <td>	{{s._id}}</td>
+                                <td>	{{s.sc}}</td>
+                                <td ng-class="{'bg-red': (s.mYTD > (momCountData.highMomNumSub*.8)),
+                                'bg-orange': (s.mYTD > (momCountData.highMomNumSub*.6) && s.mYTD  <= (momCountData.highMomNumSub*.8)),
+                                'bg-yellow': (s.mYTD > (momCountData.highMomNumSub*.4) && s.mYTD  <= (momCountData.highMomNumSub*.6)),
+                                'nee-green': (s.mYTD > (momCountData.highMomNumSub*.2) && s.mYTD <= (momCountData.highMomNumSub*.4)),
+                                'fpl-blue' : (s.mYTD <= (momCountData.highMomNumSub*.2))
+                                }">	<strong>{{s.mYTD}}</strong>	</td><td>	{{s.m12Moe}}	</td>
+                                <td>{{s.fdrTicketYTD || 0}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+<!--For Selected Substation-->
+                    <div ng-hide="!areaData.selectedSubstation || areaData.selectedManagementArea._id == 'All'|| areaData.selectedManagementArea._id == ''||areaData.selectedFeeder.name">
+                        <button class="btn btn bg-primary"  ng-class="{active : momCountData.subMapIsActive}" ng-click="toggleSubHeatMap();" >Toggle Heat Map</button>
+                        <div ng-show="momCountData.subMapIsActive==true">
+                            <h5>Heatmap Event Types</h5>
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Count</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="inves in momCountData.heatEventCounts | orderBy:'-count'">
+                                    <td>{{inves.title}}</td>
+                                    <td>{{inves.count}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <td>Moms in {{areaData.selectedSubstation._id}}</td>
+                                    <th>YTD Count</th>
+                                    <th>YTD Percent</th>
+                                </tr>
+                                </thead>
+                                <tbody ng-hide="areaData.selectedSubstation.mYTDknown==0 && areaData.selectedSubstation.mYTD==0">
+                                    <tr>
+                                        <td>Known</td>
+                                        <td class="txt-center">{{areaData.selectedSubstation.mYTDknown | number:0 }}</td>
+                                        <td class="txt-center">{{(areaData.selectedSubstation.mYTDknown/
+                                            (areaData.selectedSubstation.mYTDknown+areaData.selectedSubstation.mYTD))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Unknown</td>
+                                        <td class="txt-center">{{areaData.selectedSubstation.mYTD | number:0}}</td>
+                                        <td class="txt-center">{{(areaData.selectedSubstation.mYTD/
+                                            (areaData.selectedSubstation.mYTDknown+areaData.selectedSubstation.mYTD))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                </tbody>
+                                <tbody ng-show="areaData.selectedSubstation.moms[0].error">
+                            </table>
+                        </div>
+                        <h5>Unknown Momentaries</h5>
+                        <table class="table txt-center table-striped table-condensed table-hover" style="width:100%" >
+                            <thead>
+                            <tr>
+                                <th>	Feeder	</th>
+                                <th>	YTD	    </th>
+                                <th>	12 MoE	</th>
+                                <th>YTD Fdr Tx</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--add filter by selected SVC-->
+                            <tr ng-repeat="f in areaData.momCountFeeder | orderBy:'-mYTD' | limitTo:16 " ng-click="fdrSelectedFromList(f)">
+                                <td>	{{f.name}}  </td>
+                                <td ng-class="{'bg-red': (f.mYTD > (momCountData.highMomNumFdr*.8)),
+                                        'bg-orange': (f.mYTD > (momCountData.highMomNumFdr*.6) && f.mYTD  <= (momCountData.highMomNumFdr*.8)),
+                                        'bg-yellow': (f.mYTD > (momCountData.highMomNumFdr*.4) && f.mYTD  <= (momCountData.highMomNumFdr*.6)),
+                                        'nee-green': (f.mYTD > (momCountData.highMomNumFdr*.2) && f.mYTD <= (momCountData.highMomNumFdr*.4)),
+                                        'fpl-blue' : (f.mYTD <= (momCountData.highMomNumFdr*.2))}">
+                                    <strong>    {{f.mYTD}}  </strong>
+                                </td>
+                                <td>	{{f.m12Moe}}	</td>
+                                <td>{{f.fdrTicketYTD || 0}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+<!--For Selected Feeder-->
+                    <div ng-hide="!areaData.selectedFeeder.name ">
+                        <div>
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <td> Moms In {{areaData.selectedFeeder.name}} </td>
+                                    <th>YTD Count</th>
+                                    <th>YTD Percent</th>
+                                </tr>
+                                </thead>
+                                <tbody ng-hide="areaData.selectedFeeder.moms[0].error">
+                                    <tr>
+                                        <td>Known</td>
+                                        <td class="txt-center">{{areaData.selectedFeeder.mYTDknown | number:0 }}</td>
+                                        <td class="txt-center">{{(areaData.selectedFeeder.mYTDknown/
+                                            (areaData.selectedFeeder.mYTDknown+areaData.selectedFeeder.mYTD))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Unknown</td>
+                                        <td class="txt-center">{{areaData.selectedFeeder.mYTD | number:0}}</td>
+                                        <td class="txt-center">{{(areaData.selectedFeeder.mYTD/
+                                            (areaData.selectedFeeder.mYTDknown+areaData.selectedFeeder.mYTD))
+                                            *100| number:1}}%</td>
+                                    </tr>
+                                </tbody>
+                                <tbody ng-show="areaData.selectedFeeder.moms[0].error">
+                                    <tr>
+                                        <td colspan="3">{{areaData.selectedFeeder.moms[0].error}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h5>Unknown Momentaries</h5>
+                        <table class="table txt-center table-striped table-condensed table-hover" style="width:100%" >
+                            <thead>
+                            <tr>
+                                <!--<th>    investigation checkbox  </th>-->
+                                <th>	Date	</th>
+                                <th>	Time	</th>
+                                <th>	status	</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="m in areaData.selectedSubstation.moms | filter: {Status:'Unknown', FDR_NUM:areaData.selectedFeeder.name} | orderBy:'-BKR_OPEN_DTTM'" ng-click="openMomDetails(m)">
+                                <!--<td>checkbox here - on change m.isSelected == true or false </td>-->
+                                <td>{{m.BKR_OPEN_DTTM | date :'shortDate'}}</td>
+                                <td>{{m.BKR_OPEN_DTTM | date: 'shortTime'}}</td>
+                                <td>{{m.Status}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="sidebar-panel tab-pane" id="investigationTab" ng-class="{active:InvestigationIsActive }">
+                <div class="sidebar-header">
+                    Investigations
+                    <span class="sidebar-close" ng-click="InvestigationIsActive=false" style="right:22px"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <control-panel class="" leaflet-controls="leafletControls"></control-panel>
+                <!--<div class="sb-section">-->
+
+                <!--</div>-->
+            </div>
+
+            <div role="tabpanel" class="sidebar-panel tab-pane" id="mapKey" ng-class="{active:mapKeyIsActive }">
+                <!--<div ng-include="modals/tabmaplegend.html"></div>-->
+                <div class="sidebar-header">
+                    Map Key
+                    <span class="sidebar-close" ng-click="mapKeyIsActive=false"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <div class="sb-section">
+                    <!--<p class="lorem">Replicate Map Key here, & remove from header</p>-->
+                    <h4><span class="glyphicon glyphicon-dashboard"></span> Grid</h4>
+                    <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <td><div class="di-feeder-head legendIcon">F</div> Feeder Head</td>
+                                <td><img src="../images/icon_fuse.png" class="legendIcon" />Fuse</td>
+                            </tr>
+                            <tr>
+                                <td><div class="clear"><img src="../images/icon_switch-open.png" class="legendIcon" /> Open Switch </div></td>
+                                <td><div class="clear"><img src="../images/icon_switch-closed.png" class="legendIcon" /> Closed Switch</div></td>
+                            </tr>
+                            <tr>
+                                <td><img src="../images/icon_other-device.png" class="legendIcon" />Other Device</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><img src="../images/icon_afs-scadamate.svg" class="legendIcon"/> AFS: Scadamate</td>
+                                <td><img src="../images/icon_afs-intellirupter.svg" class="legendIcon"/> AFS: Intellirupter</td>
+                            </tr>
+                            <tr>
+                                <td><img src="../images/icon_fci.svg" class="legendIcon"/> FCI</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="glyphicon glyphicon-alert"></span> faults</h4>
+                    <table class="table table-condensed">
+                        <tbody>
+                        <tr><td>
+                            <img src="../images/icon-alert.png" class="legendIcon" />
+                            Known Fault/momentary location
+                        </td></tr>
+                        <tr><td>
+                            <div class="dot bg-yellow"></div>
+                            Likelihood Low
+                        </td></tr>
+                        <tr><td>
+                            <div class="dot bg-orange"></div>
+                            Likelihood Medium
+                            </td></tr>
+                        <tr><td>
+                            <div class="dot bg-red"></div>
+                            Likelihood High
+                        </td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="glyphicon glyphicon-tree-deciduous"></span> Vegetation</h4>
+                    <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <td><img src="../images/icon-palm.png">Palm </td>
+                                <td><img src="../images/icon_bamboo.png">Bamboo </td>
+                            </tr>
+                            <tr>
+                                <td><div class="di-vines vines-blue legendIcon"><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>New Ticket </td>
+                                <td><div class="di-vines vines-orange legendIcon"><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>Ticket is over 15 days Old </td>
+                            </tr>
+                            <tr>
+                                <td><div class="di-vines vines-red legendIcon "><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>Ticket is over 30 days Old </td>
+                                <td><div class="di-vines vines-green legendIcon"><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>Sprayed or Ticket Complete </td>
+                            </tr>
+                            <tr>
+                                <td><div class="di-vines vines-grey legendIcon"><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>Held </td>
+                                <td><div class="di-vines vines-yellow legendIcon"><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>Ticketed </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="glyphicon glyphicon-dashboard"></span> Condition Assessment</h4>
+                    <table  class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <td><img src="../images/icon_ca0.png" class="legendIcon" style="height:20px;"> CA Score 0 (Lowest severity) </td>
+                                <td><img src="../images/icon_ca1.png" class="legendIcon" style="height:20px;"> CA Score 1</td>
+                            </tr>
+                            <tr>
+                                <td><img src="../images/icon_ca2.png" class="legendIcon" style="height:20px;"> CA Score 2 </td>
+                                <td><img src="../images/icon_ca3.png" class="legendIcon" style="height:20px;"> CA Score 3 </td>
+                            </tr>
+                            <tr>
+                                <td><img src="../images/icon_ca4.png" class="legendIcon" style="height:20px;"> CA Score 4 </td>
+                                <td><img src="../images/icon_ca5.png" class="legendIcon" style="height:20px;"> CA Score 5 (highest severity) </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="glyphicon glyphicon-dashboard"></span> Trouble Tickets (By Interruption Type)</h4>
+                    <table  class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <td><img src="images/tckt-icon_fdr.svg" height="22"> Feeder </td>
+                                <td><img src="images/tckt-icon_ocr.svg" height="22"> OCR </td>
+                            </tr>
+                            <tr>
+                                <td><img src="images/tckt-icon_lat.svg" height="22">Lateral </td>
+                                <td><img src="images/tckt-icon_tx.svg" height="22"> Transformer </td>
+                            </tr>
+                            <tr>
+                                <td><img src="images/tckt-icon_mtr.svg" height="22"> Meter  </td>
+                                <td><img src="images/tckt-icon_sec.svg" height="22"> SEC   </td>
+                            </tr>
+                            <tr>
+                                <td><img src="images/tckt-icon_nls.svg" height="22"> No Loss of Service </td>
+                                <td><img src="images/tckt-icon_sv.svg" height="22"> SV span </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="glyphicon glyphicon-dashboard"></span> Other</h4>
+                    <table  class="table table-condensed">
+                        <tbody>
+                        <tr><td><img src="../images/icon-alert.png" class="legendIcon">Known Fault/momentary location </td></tr>
+                        <tr><td><span class="glyphicon glyphicon-tag legendIcon txt-red"></span>Trouble Ticket </td></tr>
+                        <tr><td><span class="glyphicon glyphicon-wrench legendIcon" style="color:rgba(96,127,131,1)"></span>Work Order </td></tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<!--Right Sidebar-->
+    <div class="row-fluid map-overlap sb-right full-height full-width" id="rightSB" ng-class="{sbCollapsed : !MitIsActive && !MomListIsActive && !MomChartIsActive}">
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <!--default open with MOM tab open-->
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="left" title="Momentary Counts">
+                    <input type="checkbox" id="MitTableSB" ng-model="MitIsActive" ng-init="MitIsActive=false" ng-change="MomListIsActive=false; MomChartIsActive=false" ng-click="hideMomEdit()">
+                    <label for="MitTableSB"><i class="glyphicon glyphicon-stats"></i></label>
+                </li>
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="left" title="List of Momentaries">
+                    <input type="checkbox" id="MomListTableSB" ng-model="MomListIsActive" ng-init="MomListIsActive=false" ng-change="MitIsActive=false; MomChartIsActive=false">
+                    <label for="MomListTableSB"><i class="glyphicon glyphicon-list"></i></label>
+                </li>
+
+                <li role="presentation" class="" data-toggle="tooltip" data-placement="left" title="Mom Charts, Known Vs Unknowns">
+                    <input type="checkbox" id="MomChartSB" ng-model="MomChartIsActive" ng-init="MomChartIsActive=false" ng-change="MitIsActive=false; MomListIsActive=false">
+                    <label for="MomChartSB"><i class="glyphicon glyphicon-dashboard"></i></label>
+                </li>
+
+            </ul>
+        </div>
+        <div class="sidebar-content tab-content">
+            <div role="tabpanel" class="sidebar-panel tab-pane" ng-class="{active:MitIsActive}">
+                <div class="sidebar-header">
+                    Momentary Counts by Feeder
+                    <span class="sidebar-close" ng-click="MitIsActive=false" style="right:22px"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <div class="sb-section">
+                    <table class="table-striped table-hover" ng-hide="!areaData.selectedManagementArea">
+                        <thead>
+                            <tr>
+                                <th ng-click="momSortKey('ma')" style="width:55px;">
+                                    MA
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='ma'"></span>
+                                    <span ng-hide="momCountSortBy!=='ma'">
+                                        <span class="glyphicon glyphicon-sort-by-alphabet" ng-show="!momCountSort.reverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-alphabet-alt" ng-hide="!momCountSort.reverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('sc')" style="width:55px;">
+                                    SVC
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='sc'"></span>
+                                    <span ng-hide="momCountSortBy!=='sc'">
+                                        <span class="glyphicon glyphicon-sort-by-alphabet" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-alphabet-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('sub')" style="width:140px;">
+                                    Substation
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='sub'"></span>
+                                    <span ng-hide="momCountSortBy!=='sub'">
+                                        <span class="glyphicon glyphicon-sort-by-alphabet"     ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-alphabet-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('name')">
+                                    Feeder
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='name'"></span>
+                                    <span ng-hide="momCountSortBy!=='name'">
+                                        <span class="glyphicon glyphicon-sort-by-order" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('mYTDknown')">
+                                    YTD known
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='mYTDknown'"></span>
+                                    <span ng-hide="momCountSortBy!=='mYTDknown'">
+                                        <span class="glyphicon glyphicon-sort-by-order" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('mYTD')">
+                                    YTD unknown
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='mYTD'"></span>
+                                    <span ng-hide="momCountSortBy!=='mYTD'">
+                                        <span class="glyphicon glyphicon-sort-by-order" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('m12MoeKnown')">
+                                    12 MoE known
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='m12MoeKnown'"></span>
+                                    <span ng-hide="momCountSortBy!=='m12MoeKnown'">
+                                        <span class="glyphicon glyphicon-sort-by-order" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <th ng-click="momSortKey('m12Moe')">
+                                    12 MoE unknown
+                                    <span class="glyphicon glyphicon-sort" ng-show="momCountSortBy!=='m12Moe'"></span>
+                                    <span ng-hide="momCountSortBy!=='m12Moe'">
+                                        <span class="glyphicon glyphicon-sort-by-order" ng-show="!momCountSortReverse"></span>
+                                        <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momCountSortReverse"></span>
+                                    </span>
+                                </th>
+                                <!--<th>future Data</th>-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="a in areaData.momCountFeeder | orderBy:momCountSortBy:momCountSortReverse | startFrom:((momCountData.momCountCurrentPg-1)*10) | limitTo:10 " ng-init="momCountSortReverse=true ">
+                                <!--ordeyBy,
+                                then filters MA, SVC, Sub, Feeder, text,
+                                then start from, then limitTo
+                                ng-repeat="vine in vinesData.vines | orderBy: vinesSort.key : vinesSort.reverse  |
+		  filter: {ticketStatus:vinesStatFilter} | filter:vinesTxtFilter | startFrom:(currentPage-1)*9 | limitTo:9"
+                                -->
+                                <td>{{a.ma}}</td>
+                                <td>{{a.sc}}</td>
+                                <td>{{a.sub}}</td>
+                                <td>{{a.name}}</td>
+                                <td>{{a.mYTDknown}}</td>
+                                <td>{{a.mYTD}}</td>
+                                <td>{{a.m12MoeKnown}}</td>
+                                <td>{{a.m12Moe}}</td>
+                                <!--<td>future data</td>-->
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div ng-show="!areaData.selectedManagementArea">Select a MA to view</div>
+                </div>
+
+            </div>
+
+            <div role="tabpanel" class="sidebar-panel tab-pane" ng-class="{active:MomListIsActive}">
+                <!--&& !MitIsActive-->
+                <div class="sidebar-header">
+                    List Of Momentaries
+                    <span ng-hide="!areaData.selectedSubstation || areaData.selectedManagementArea._id == 'All'">in {{areaData.selectedSubstation._id}}
+                        <span ng-hide="!areaData.selectedFeeder.name"> > {{areaData.mostSpecificSelectionIdentifier}} </span>
+                        : {{(areaData.selectedSubstation.moms | filter: {FDR_NUM:areaData.selectedFeeder.name}).length}} total
+                    </span>
+                    <span class="sidebar-close" ng-click="MomListIsActive=false;cancelMomEdit();" style="right:22px"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <div class="sb-section">
+                    <div ng-show="displayMomEdit" class="center" style="width:80%;">
+                        <div class="nee-green" style="padding:15px; font-size: larger">
+                            <strong>Edit Momentary</strong>
+                            <i class="glyphicon glyphicon-remove right" ng-click="hideMomEdit()"></i>
+                        </div>
+                        <div class="b-grey" style="padding:15px; ">
+                            <label class="txt-right">Area : </label>
+                            <span class="txt-fpl-blue">{{momCountData.selectedMomentary.MGR_AREA_CODE}} > {{momCountData.selectedMomentary.SUBSTN_NAME}} > {{momCountData.selectedMomentary.FDR_NUM}}</span> <br />
+                            <label class="txt-right">Status : </label> {{momCountData.selectedMomentary.Status}}
+
+
+                            <br />
+                            <label class="txt-right">Date : </label> {{momCountData.selectedMomentary.BKR_OPEN_DTTM | date :'shortDate'}}
+                                <span class="glyphicon glyphicon-time" style="padding-left: 5px"></span> : {{momCountData.selectedMomentary.BKR_OPEN_DTTM | date: 'shortTime'}}<br />
+
+                            <!--hide form but show info if user not approved -->
+                            <div ng-show="enableMomEdit == false" class="row ">
+                                <div class="col-sm-12 alert alert-warning">You do not have permission to edit Momentaries</div>
+                                <div class="col-sm-12"><label>Location: </label>{{displayMomEditLocation}}</div>
+                                <div class="col-sm-12"><label>Cause: </label>{{momCountData.momEdits.causeCode.cause_code}}</div>
+                                <div class="col-sm-12"><label>Comments: </label>{{momCountData.momEdits.causeComments}}</div>
+                            </div>
+
+                           <form class="form" ng-show="enableMomEdit == true">
+                               <div class="form-group">
+                                   <label class="sr-only" for="momEditLocation">Location)</label>
+                                   <div class="input-group">
+                                       <input type="text" class="form-control" id="momEditLocation" placeholder="Click on Map to set Location" ng-model="displayMomEditLocation" disabled>
+
+                                       <div class="input-group-addon"><span class="glyphicon glyphicon-map-marker"></span></div>
+                                   </div>
+                               </div>
+                               <div class="form-group">
+                                   <label class="sr-only" for="momEditCause">Cause</label>
+                                   <div class="input-group">
+                                       <select class="form-control" id="momEditCause"
+                                               ng-options="cause as cause.cause_code for cause in momCountData.causeCodes track by cause.cause_code"
+                                               ng-model="momCountData.momEdits.causeCode">
+                                           <option value="">Set Cause</option>
+
+                                       </select>
+                                   </div>
+                               </div>
+                               <div class="form-group">
+                                   <label class="sr-only" for="momEditComments">Location)</label>
+                                   <div class="input-group">
+                                       <textarea type="text" class="form-control" id="momEditComments" placeholder="Comments" ng-model="momCountData.momEdits.causeComments">
+                                       </textarea>
+                                       <div class="input-group-addon"><span class="glyphicon glyphicon-comment"></span></div>
+                                   </div>
+                                   <div class="">
+                                       <button type="submit" class="btn btn-primary" ng-click="submitMomEdit()" ng-disabled="momCountData.selectedMomentary.Status == 'Unknown' && (!momCountData.momEdits.causeLocation || !momCountData.momEdits.causeCode)">Submit</button>
+                                       <br />
+                                       <button type="submit" class="btn btn-warning" ng-click="setMomAsUnknown()" ng-disabled="momCountData.selectedMomentary.Status == 'Unknown' ">Set As Unknown</button>
+                                       <button class="btn btn-danger" ng-click="cancelMomEdit()">Cancel</button>
+                                   </div>
+                               </div>
+                           </form>
+                        </div>
+                    </div>
+
+                    <div ng-show="!areaData.selectedSubstation || areaData.selectedManagementArea._id == 'All'">Select a Substation to view</div>
+                    <div ng-show="areaData.selectedSubstation.moms[0].error">
+                        No Momentary Data for this Substation
+                    </div>
+                    <div class="table-container col-xs-12" style="width:98%;" ng-hide="!areaData.selectedSubstation || displayMomEdit || areaData.selectedSubstation.moms[0].error">
+                        <div style="height:400px;">
+                            <table class="table txt-center table-striped table-condensed table-hover table-fixed" style="width:100%">
+                                   <!--ng-hide="!areaData.selectedSubstation || !areaData.selectedSubstation.moms.error || displayMomEdit">-->
+                                <thead>
+                                    <tr>
+                                        <td> <div></div></td>
+                                        <th>
+                                            Feeder
+                                            <div ng-click="momListSortKey('FDR_NUM')">
+                                                Feeder
+                                                <span class="glyphicon glyphicon-sort" ng-show="momListSortBy!=='FDR_NUM'"></span>
+                                                <span ng-hide="momListSortBy!=='FDR_NUM'">
+                                                <span class="glyphicon glyphicon-sort-by-order" ng-show="!momListSortReverse"></span>
+                                                <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momListSortReverse"></span>
+                                            </span>
+                                            </div>
+                                        </th>
+                                        <th >
+                                            Date
+                                            <div ng-click="momListSortKey('BKR_OPEN_DTTM')">
+                                                Date
+                                                <span class="glyphicon glyphicon-sort" ng-show="momListSortBy!=='BKR_OPEN_DTTM'"></span>
+                                                <span ng-hide="momListSortBy!=='BKR_OPEN_DTTM'">
+                                                <span class="glyphicon glyphicon-sort-by-order" ng-show="!momListSortReverse"></span>
+                                                <span class="glyphicon glyphicon-sort-by-order-alt" ng-hide="!momListSortReverse"></span>
+                                            </span>
+                                            </div>
+
+                                        </th>
+                                        <th>    Time	<div>Time</div>	</th>
+                                        <th >
+                                            Status
+                                            <div ng-click="momListSortKey('Status')">
+                                                Status
+                                                <span class="glyphicon glyphicon-sort" ng-show="momListSortBy!=='Status'"></span>
+                                            <span ng-hide="momListSortBy!=='Status'">
+                                                <span class="glyphicon glyphicon-sort-by-alphabet" ng-show="!momListSortReverse"></span>
+                                                <span class="glyphicon glyphicon-sort-by-alphabet-alt" ng-hide="!momListSortReverse"></span>
+                                            </span>
+                                            </div>
+
+                                        </th>
+                                        <th>
+                                            Cause
+                                            <div ng-click="momListSortKey('causeCode.cause_code')">
+                                                Cause
+                                                <span class="glyphicon glyphicon-sort" ng-show="momListSortBy!=='causeCode.cause_code'"></span>
+                                                <span ng-hide="momListSortBy!=='causeCode.cause_code'">
+                                                <span class="glyphicon glyphicon-sort-by-alphabet" ng-show="!momListSortReverse"></span>
+                                                <span class="glyphicon glyphicon-sort-by-alphabet-alt" ng-hide="!momListSortReverse"></span>
+                                            </span>
+                                            </div>
+                                        </th>
+                                        <th>	Cause From  <div>Cause From</div>    </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="m in areaData.selectedSubstation.moms | orderBy:momListSortBy:momListSortReverse | filter: {FDR_NUM:areaData.selectedFeeder.name}" ng-click="setSelectedMomentary(m)">
+                                    <!--<tr ng-repeat="m in areaData.selectedSubstation.moms | orderBy:momListSortBy:momListSortReverse |filter: {FDR_NUM:areaData.selectedFeeder.name} | startFrom:((momListCurrentPg-1)*10)| limitTo:10 ">-->
+                                        <td>
+                                            <button class="btn btn-info btn-tiny" ng-click="showMomEdit(m)" data-toggle="tooltip" data-placement="top" title="Edit this Momentary">
+                                                <!--ng-disabled="!usr.security.canEditMIT || usr.security.canEditMIT==false"-->
+                                                <span class="glyphicon glyphicon-edit"></span>
+                                                <!--ng-click="momIRform.$show()"-->
+                                            </button>
+                                            <button class="btn btn-info btn-tiny" ng-click="goToMomMap(m)" ng-show="m.Status =='Known'" data-toggle="tooltip" data-placement="top" title="Edit this Momentary">
+                                                <span class="glyphicon glyphicon-map-marker" style=""></span>
+                                            </button>
+                                        </td>
+                                        <td>{{m.FDR_NUM}}</td>
+                                        <td ng-class="{'highlight-yel':(m._id == selMomID)}">{{m.BKR_OPEN_DTTM | date :'shortDate'}} </td>
+                                        <td ng-class="{'highlight-yel':(m._id == selMomID)}">{{m.BKR_OPEN_DTTM | date: 'shortTime'}}</td>
+                                        <td ng-class="{'txt-red': (m.Status =='Unknown')}">{{m.Status}}</td>
+                                        <td>{{m.causeCode.cause_code}}</td><!--cause-->
+                                        <td>
+                                            <span ng-show="m.Ticket.TRBL_TCKT_NUM && !m.updatedBy"><strong>TT#: </strong> {{m.Ticket.TRBL_TCKT_NUM}} | <strong>Int Type: </strong>{{m.Ticket.IRPT_TYPE_CODE}}</span>
+                                            <span ng-show="m.updatedBy" class="txt-fpl-blue">User: {{m.updatedBy}}</span>
+                                            <span ng-show="m.Lightning.location">
+                                                <span class="glyphicon glyphicon-flash txt-orange"></span><strong>Lightning</strong>
+                                            </span>
+                                        </td><!--cause From if ticket, and if updated by-->
+
+                                    </tr>
+                                </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--</div>-->
+
+            <div role="tabpanel" class="sidebar-panel tab-pane" ng-class="{active:MomChartIsActive }">
+                <!--&& !MitIsActive && !MomListIsActive-->
+                <div class="sidebar-header">
+                    Momentary Charts Current Selection:
+                    <span ng-show="areaData.mostSpecificSelection"> {{areaData.mostSpecificSelectionIdentifier}}</span>
+                    <span ng-show="!areaData.mostSpecificSelection"> FPL</span>
+                    <span class="sidebar-close" ng-click="MomChartIsActive=false" style="right:22px"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+                <div class="sb-section">
+                    <!--Add buttons for YTD vs. 12moe, need to code that switch in momCountFactory as well-->
+                    <div class="col-sm-6">
+                        <h3>Known Vs. Unknown YTD</h3>
+                        <div id="chartMomDiv" class="col-sm-12"></div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>Breakdown Known by Cause YTD</h3>
+
+                        <div id="chartKnownDiv" class="col-sm-12"></div>
+                        <!--<p><strong>CURRENTLY USING DUMMY DATA</strong></p>-->
+                        <p>Known Moms breakdown by cause type</p>
+                        <!--<div class="col-sm-12 teal1" style="height:300px">-->
+                            <!--<ul>-->
+                                <!--<li>TT</li>-->
+                                <!--<li>Lightning</li>-->
+                                <!--<li>Manual Entry</li>-->
+                            <!--</ul>-->
+                            <!--&lt;!&ndash;Placeholder&ndash;&gt;-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="sidebar-footer">
+                <div ng-show="MitIsActive" style="width:100%">
+                    <uib-pagination class="col-xs-6"
+                                    total-items="areaData.momCountFeeder.length"
+                                    ng-model="momCountData.momCountCurrentPg" max-size="7" boundary-links="true" items-per-page="10"
+                                    ng-hide="areaData.momCountFeeder.length<=10 && !areaData.selectedManagementArea">
+                    </uib-pagination>
+                    <span>Number of results: {{areaData.momCountFeeder.length}}</span>
+
+                    <button type="button" class="btn btn-primary right" ng-csv="areaData.momCountFeeder"
+                            filename="{{areaData.mostSpecificSelectionIdentifier}}_Momentary_CountByFeeder.csv"
+                            csv-column-order="momCountCsvCols" csv-header="momCountCsvHeaders"
+                            ng-disabled="areaData.momCountFeeder<=0"
+                    >
+                        <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                    </button>
+                </div>
+
+                <div ng-show="MomListIsActive" style="width:100%">
+                    <span>Number of results: {{(areaData.selectedSubstation.moms | filter: {FDR_NUM:areaData.selectedFeeder.name}).length}}</span>
+                    <!--<uib-pagination class="col-xs-6"-->
+                    <!--total-items="(areaData.selectedSubstation.moms | filter: {FDR_NUM:areaData.selectedFeeder.name}).length"-->
+                    <!--ng-model="momListCurrentPg" max-size="7" boundary-links="true" items-per-page="10" >-->
+                    <!--ng-hide="(areaData.selectedSubstation.moms | filter: {FDR_NUM:areaData.selectedFeeder.name}).length<=10"-->
+                    <!--</uib-pagination>-->
+
+                    <!-- -->
+                    <button type="button" class="btn btn-primary right" ng-csv="momCountData.momListForCsvExport"
+                            filename="Momentary_List_for_{{areaData.mostSpecificSelectionIdentifier}}.csv"
+                            csv-column-order="momListCsvCols" csv-header="momListCsvHeaders"
+                            ng-disabled="areaData.selectedSubstation.moms <= 0"
+                    >
+                        <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

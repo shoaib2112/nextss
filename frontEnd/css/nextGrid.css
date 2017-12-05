@@ -1,0 +1,20 @@
+#fault-list-wrapper .sideTabList a {
+  color:#525252;
+}
+
+.modal-footer div ul.pagination li a{
+  width:40px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  text-align: center;
+}
+
+#mitTable .panel.panel-primary{
+  background: -webkit-linear-gradient(top, rgba(0,150,219,1) 0%,rgba(9,117,167,1) 10%,rgba(9,117,167,1) 15%, rgba(9,117,167,0) 16%);
+}
+
+#mitTable .panel-primary > .panel-heading{
+  background-image: none;
+  background:transparent;
+}

@@ -1,0 +1,18 @@
+<div class="modal-header"></div>
+<div class="modal-body">
+    <tabset>
+        <tab heading="Asset">
+            <h3>{{rcRow.id}}</h3>
+            <div ng-controller="vinesDashCtrl">
+                <nvd3 options="options" data="data"></nvd3>
+            </div>
+            <div id="divChart" style="float:right;height:200px;width:200%;"></div>
+        </tab>
+        
+        
+    </tabset>
+    </div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="ok()">OK</button>
+    <button type="button" class="btn btn-warning" ng-click="close()">Cancel</button>
+</div>

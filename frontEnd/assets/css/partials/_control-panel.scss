@@ -1,0 +1,33 @@
+.controlPanel {
+  right: 0;
+  -webkit-transition: right 2s ease;
+  -moz-transition: right 2s ease;
+  -ms-transition: right 2s ease;
+  -o-transition: right 2s ease;
+  transition: right 2s ease;
+
+}
+
+.controlPanel.closed{
+  right: -30%;
+}
+
+#wrapper{
+  top: 0;
+}
+
+#header{
+  z-index: 1;
+  background: rgba(0,0,0,0);
+  padding: 10px 0 0 45px;
+  color: black;
+  select {
+    display: inline-block;
+  }
+
+}
+
+#btn-bank {
+  right: 55px;
+  top: 10px;
+}

@@ -1,0 +1,186 @@
+﻿<html ng-app="soApp">
+<head>
+<title>Switching Orders</title>
+    <link rel="stylesheet" href="../css/nextgrid.min.css" />
+    <!--<script src="../js/jquery-2.1.4.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="../js/angular-animate.min.js"></script>
+    <script src="../js/angular-sanitize.min.js"></script>
+    <script src="../js/ng-csv.min.js"></script>
+    <script src="../js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="../js/underscore.min.js"></script>
+    <script src="./switchingOrders.js"></script>-->
+    <!--<link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/pdim-style.css">-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+	.tab-content .table-condensed {
+    font-size: 12px;
+}
+	  .tab-content .table-condensed th {
+	    font-size: 14px;
+	  text-align:center;
+	  vertical-align:middle;
+}
+	#btn-bank {
+		float: right;
+		position: absolute;
+		right: 20px;
+		top: 15px;
+}
+  </style>
+</head>
+<body ng-controller="switchingCtrl">
+<div id="header">
+    <img src="../assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo">
+    <h3>Smart Grid Applications</h3>
+    <h5><span id="AppTitle"></span></h5>
+    <div id="btn-bank">
+        <!--<button class="btn btn-success" style="margin-left:5px;">
+            <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>
+            <a href="/nextGrid.html" style="color:#fff; text-decoration:none;">Map</a>
+        </button>-->
+      <div ng-include="'/ddMenu.html'"></div>
+    </div>
+</div> 
+<div class="row" id="wrapper" style="max-width:95%;">
+    <h3>Switching Orders</h3>
+    <div id="table" style="overflow:auto;">
+        <uib-tabset class="col col-md-12">
+            <uib-tab heading="Completed">
+                <button type="button" class="btn btn-primary" ng-csv="completedOrders" filename="completedOrders.csv" csv-header="keysC">
+                    <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                </button>
+                <table class="tabPDC table table-striped table-condensed">
+                    <tr>
+                        <th>WR</th>
+                        <th>Requester</th>
+                        <th>Email</th>
+                        <th><a href="#" ng-click="myOrder='ma'; ud = !ud">MA</a></th>
+                        <th>Svc Ctr</th>
+                        <th>Substation</th>
+                        <th>Feeder</th>
+                        <th>Type</th>
+                        <th>R Code</th>
+                        <th>R Status</th>
+                        <th>SWO Code</th>
+                        <th>SWO Status</th>
+                        <th>Need By Date</th>
+                        <th>Reason for Work</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr class="ng-cloak" ng-repeat="row in completedOrders | orderBy: myOrder: ud">
+                        <td>{{row.extracted_wr}}</td>
+                        <td>{{row.REQUESTOR}}</td>
+                        <td>{{row.REQUESTOR_EMAIL}}</td>
+                        <td>{{row.ma}}</td>
+                        <td>{{row.SVC_CTR}}</td>
+                        <td>{{row.SUBSTATION}}</td>
+                        <td>{{row.FEEDER_NAME}}</td>
+                        <td>{{row.TYPE}}</td>
+                        <td>{{row.R_CODE}}</td>
+                        <td>{{row.R_STATUS}}</td>
+                        <td>{{row.SWO_CODE}}</td>
+                        <td>{{row.SWO_STATUS}}</td>
+                        <td>{{row.NEED_BY_DTTM | date}}</td>
+                        <td>{{row.Reason}}</td>
+                        <td>{{row.status}}</td>
+                    </tr>
+                </table>
+            </uib-tab>
+            <uib-tab heading="Written">
+                <button type="button" class="btn btn-primary" ng-csv="writtenOrders" filename="writtenOrders.csv" csv-header="keysW">
+                    <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                </button>
+                <table class="tabPDC table table-striped table-condensed">
+                    <tr>
+                        <th>WR</th>
+                        <th>Requester</th>
+                        <th>Email</th>
+                        <th><a href="#" ng-click="myOrder='ma'; ud = !ud">MA</a></th>
+                        <th>Svc Ctr</th>
+                        <th>Substation</th>
+                        <th>Feeder</th>
+                        <th>Type</th>
+                        <th>R Code</th>
+                        <th>R Status</th>
+                        <th>SWO Code</th>
+                        <th>SWO Status</th>
+                        <th>Need By Date</th>
+                        <th>Reason for Work</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr ng-repeat="row in writtenOrders | orderBy: myOrder: ud">
+                        <td>{{row.extracted_wr}}</td>
+                        <td>{{row.REQUESTOR}}</td>
+                        <td>{{row.REQUESTOR_EMAIL}}</td>
+                        <td>{{row.ma}}</td>
+                        <td>{{row.SVC_CTR}}</td>
+                        <td>{{row.SUBSTATION}}</td>
+                        <td>{{row.FEEDER_NAME}}</td>
+                        <td>{{row.TYPE}}</td>
+                        <td>{{row.R_CODE}}</td>
+                        <td>{{row.R_STATUS}}</td>
+                        <td>{{row.SWO_CODE}}</td>
+                        <td>{{row.SWO_STATUS}}</td>
+                        <td>{{row.NEED_BY_DTTM | date}}</td>
+                        <td>{{row.Reason}}</td>
+                        <td>{{row.status}}</td>
+                    </tr>
+                </table>
+            </uib-tab>
+            <uib-tab heading="Not Completed">
+                <button type="button" class="btn btn-primary" ng-csv="incompleteOrders" filename="incompleteOrders.csv" csv-header="keysI">
+                    <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+                </button>
+                <table class="tabPDC table table-striped table-condensed">
+                    <tr>
+                        <th>WR</th>
+                        <th>Requester</th>
+                        <th>Email</th>
+                        <th><a href="#" ng-click="myOrder='ma'; ud = !ud">MA</a></th>
+                        <th>Svc Ctr</th>
+                        <th>Substation</th>
+                        <th>Feeder</th>
+                        <th>Type</th>
+                        <th>R Code</th>
+                        <th>R Status</th>
+                        <th>SWO Code</th>
+                        <th>SWO Status</th>
+                        <th>Need By Date</th>
+                        <th>Reason for Work</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr ng-repeat="row in incompleteOrders | orderBy: myOrder: ud" style="overflow-y:scroll;">
+                        <td>{{row.extracted_wr}}</td>
+                        <td>{{row.REQUESTOR}}</td>
+                        <td>{{row.REQUESTOR_EMAIL}}</td>
+                        <td>{{row.ma}}</td>
+                        <td>{{row.SVC_CTR}}</td>
+                        <td>{{row.SUBSTATION}}</td>
+                        <td>{{row.FEEDER_NAME}}</td>
+                        <td>{{row.TYPE}}</td>
+                        <td>{{row.R_CODE}}</td>
+                        <td>{{row.R_STATUS}}</td>
+                        <td>{{row.SWO_CODE}}</td>
+                        <td>{{row.SWO_STATUS}}</td>
+                        <td>{{row.NEED_BY_DTTM | date}}</td>
+                        <td>{{row.Reason}}</td>
+                        <td>{{row.status}}</td>
+                    </tr>
+                </table>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <div style="display:none;">
+        <div class="col-md-12 col-sm-12" id="leaflet"></div>
+    </div>
+    <!--This is to make leaflet think we have a map on this page-->
+    <script src="../js/other.min.js"></script>
+    <!--<script src="../js/nextgrid.min.js"></script>-->
+</body>
+</html>

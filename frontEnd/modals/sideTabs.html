@@ -1,0 +1,240 @@
+﻿<script id="template/pagination/pagination.html" type="text/ng-template">
+  <ul class="pagination">
+    <li ng-if="boundaryLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(1)" title="First Page"> <span class="glyphicon glyphicon-fast-backward"></span></a></li>
+    <li ng-if="directionLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(page - 1)" title="Previous Page"><span class="glyphicon glyphicon-backward"></span></a></li>
+    <li ng-repeat="page in pages track by $index" ng-class="{active: page.active}"><a href ng-click="selectPage(page.number)">{{page.text}}</a></li>
+    <li ng-if="directionLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(page + 1)" title="Next Page"><span class="glyphicon glyphicon-forward"></span></a></li>
+    <li ng-if="boundaryLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(totalPages)" title="Last Page"><span class="glyphicon glyphicon-fast-forward"></span> </a></li>
+  </ul>
+</script>
+
+<div id="tab-wrapper" class="tabbable tabs-left tabHide hide">
+  <!--<div id="expand-tab" class="expand-tab tab-top">
+      <p>Charts</p>
+  </div>-->
+  <ul id="sideTabMenu" class="nav nav-tabs">
+    <li>
+      <a href="" id="tabCollapse" onclick="tabToggle()">
+        <span id="tabClose" class="hide">Close <img src="images/close-w.svg" width="15" /></span>
+        <span id="tabOpen" class="show">Open <img src="images/open-w.svg" width="15" /></span>
+      </a>
+    </li>
+    <!-- Hide/Show tabs based on Inspections or visible map layers -->
+    <li id="vineTabLink" class="tab hide"><a href="#chartTab" data-toggle="tab">Vines</a></li>
+    <li id="faultTablink" class="tab hide"><a href="#faultsTab" data-toggle="tab">Fault List</a></li>
+    <li id="elTabLink" class="tab hide"><a href="#EquipLog" data-toggle="tab">Equip Log</a></li>
+    <li id="tktTabLink" class="tab hide"><a href="#tktTab" data-toggle="tab">Tickets</a></li>
+  </ul>
+  <div class="tab-content ">
+    <div class="tab-pane fade in active" id="chartTab">
+      <div id="" class="col-xs-12">
+        <h5 ng-show="!vines.length">No Vines Reported in this Area</h5>
+        <div id="vineBars" class="hide">
+          <h5 class="left">All Vines: <span> {{vines.length}}</span></h5>
+          <button class="btn sm-button right btn-primary" ng-click="showVinesList();">Open List</button>
+          <!--<label>New: </label><span> {{vinesBlue.length}}</span>
+                                          <label>Sprayed: </label><span> {{vinesGreen.length}}</span>
+                          <label>15+ Days: </label><span> {{vinesOrange.length}}</span>
+          <label>30+ Days: </label><span> {{vinesRed.length}}</span>
+                          <label>Ticketed: </label><span> {{vinesYellow.length}}</span>
+                                          <label>Ticketed: </label><span> {{vinesGrey.length}}</span>
+          -->
+          <div ng-hide="!vines.length">
+            <label>New: {{vinesBlue.length}}</label>
+            <div class="progress" ng-hide="!vinesBlue.length">
+              <div id="vblue" class="bgblue" role="progressbar" aria-valuenow="{{vinesBlue.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}">
+                <span>{{vinesBlue.length}}</span>
+              </div>
+            </div>
+            <label>Completed: {{vinesGreen.length}}</label>
+            <div class="progress" ng-hide="!vinesGreen.length">
+              <div id="vgreen" class="bg-green" role="progressbar" aria-valuenow="{{vinesGreen.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}">
+                <span>{{vinesGreen.length}}</span>
+              </div>
+            </div>
+            <label>15+ Days: {{vinesOrange.length}}</label>
+            <div class="progress" ng-hide="!vinesOrange.length">
+              <div id="vorange" class="bg-orange" role="progressbar" aria-valuenow="{{vinesOrange.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}">
+                <span>{{vinesOrange.length}}</span>
+              </div>
+            </div>
+            <label>30+ Days: {{vinesRed.length}}</label>
+            <div class="progress" ng-hide="!vinesRed.length">
+              <div id="vred" class="bg-red" role="progressbar" aria-valuenow="{{vinesRed.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}" style="width: {{(vinesRed.length/vines.length)*100}}%">
+                <span>{{vinesRed.length}}</span>
+              </div>
+            </div>
+            <label>Held: {{vinesGrey.length}}</label>
+            <div class="progress" ng-hide="!vinesGrey.length">
+              <div id="vgrey" class="fpl-grey" role="progressbar" aria-valuenow="{{vinesGrey.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}" style="width: {{(vinesGrey.length/vines.length)*100}}%">
+                <span>{{vinesGrey.length}}</span>
+              </div>
+            </div>
+            <label>Others: {{vinesYellow.length}}</label>
+            <div class="progress" ng-hide="!vinesYellow.length">
+              <div id="vyellow" class="bg-yellow" role="progressbar" aria-valuenow="{{vinesYellow.length}}" aria-valuemin="0" aria-valuemax="{{vines.length}}" style="width: {{(vinesYellow.length/vines.length)*100}}%">
+                <span>{{vinesYellow.length}}</span>
+              </div>
+            </div>
+          </div>
+
+          <span ng-show ng-repeat="vines in vinesBlue = (vines|filter:{col:'blue'})">..</span>
+          <span ng-show ng-repeat="vines in vinesGreen = (vines|filter:{col:'green'})">..</span>
+          <span ng-show ng-repeat="vines in vinesYellow = (vines|filter:{col:'yellow'})"></span>
+          <span ng-show ng-repeat="vines in vinesRed = (vines|filter:{col:'red'})"></span>
+          <span ng-show ng-repeat="vines in vinesOrange = (vines|filter:{col:'orange'})"></span>
+          <span ng-show ng-repeat="vines in vinesGrey = (vines|filter:{col:'grey'})"></span>
+        </div>
+        <!--<div class="dash" id="divPie">-->
+      </div>
+    </div>
+
+    <div class="tab-pane fade in" id="faultsTab">
+      <div id="fault-list-wrapper" class="col-xs-12">
+        <h5 class="col-xs-10">
+          {{faults.length}} FAULTS for {{sub}}<br />
+          <span ng-show="selectionType=='feeder'"> for Feeder {{feeder}} on {{oneDate | date:'shortDate'}}</span>
+        </h5>
+
+        <uib-pagination class="col-xs-12 pagination-sm" total-items="faults.length" ng-model="currentPage" items-per-page="10" max-size="5" ng-show="faults.length>10">
+        </uib-pagination>
+        <!--<h5 ng-show="!faults" class="clear"> No faults for {{oneDate | date:'shortDate'}} on {{selection}}</h5>-->
+        <!-- AJHEDIT added in ng-class for if it is a combined map. WILL NEED TO CHANGE parameter/expression after -->
+        <div class="sideTabList col-xs-12" ng-repeat="f in faults  | startFrom:(currentPage-1)*10 | limitTo:10" ng-click="showOneFault(f.id)" ng-class="teal1, isCombined">
+          
+          <div class="col-xs-12">
+            <div class="col-xs-6">
+              <strong>{{sub}} {{f.feederNumber}}</strong>
+            </div>
+            <div class="col-xs-6">
+              <strong>Fault ID</strong>:
+              <!--<a id="{{ f.id }}" ng-href text="Click to render">-->{{ f.id }}<!--</a>--><br />
+            </div>
+
+          </div>
+          <div class="col-xs-12">
+            <div class="col-xs-6">
+              <strong>Date: </strong><span ng-bind="f.faultDate | date:'shortDate'"></span>
+              <br /><span class="glyphicon glyphicon-time"></span> <span ng-bind="f.faultDate | date:'HH:mm:ss'"></span>
+            </div>
+            <div class="col-xs-6">
+              <span ng-show="f.faultType!=='Breaker'"><strong>{{f.faultType}}</strong>: {{f.faultInformation}}</span>
+              <span ng-show="f.faultType=='Breaker'"><strong>{{f.faultType}}</strong> {{f.faultType2}}</span>
+              <br />
+              <span ng-show="f.faultA>f.faultB && f.faultA>f.faultC"><strong>A</strong>:{{f.faultA | number:2}}</span>
+              <span ng-show="f.faultB>f.faultA && f.faultB>f.faultC"><strong>B</strong>:{{f.faultB | number:2}}</span>
+              <span ng-show="f.faultC>f.faultB && f.faultC>f.faultA"><strong>C</strong>:{{f.faultC | number:2}}</span>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <div class="col-xs-6">
+
+            </div>
+            <div class="col-xs-6">
+
+            </div>
+
+          </div>
+        </div>
+        <hr />
+      </div>
+    </div>
+
+    <div class="tab-pane fade in" id="EquipLog">
+      <h5 ng-show="!equip.length"><br />No Equipment Log For this Feeder</h5>
+      <div class="col-xs-12" ng-hide="!equip.length">
+        <h5>Equipment Log for {{equip[0].sub}} {{feeder}}</h5>
+        <uib-pagination class="col-xs-12 pagination-sm" total-items="equip.length" ng-model="currentPage" items-per-page="5" max-size="5" rotate="false" ng-show="equip.length>5">
+        </uib-pagination>
+        <div class="col-xs-12 sideTabList" ng-repeat="e in equip  | startFrom:(currentPage-1)*5 | limitTo:5">
+          <div class="col-xs-6 bottomline">
+            <strong>Sub: </strong><span>{{e.sub}}</span>
+          </div>
+          <div class="col-xs-6 bottomline">
+            <strong>Feeder: </strong><span>{{e.feeder}}</span>
+          </div>
+          <div class="col-xs-12">
+            <strong>Remarks:</strong><span>{{e.TXT_REMARKS}}</span>
+          </div>
+        </div>
+        <hr />
+        <div>
+          <button type="button" class="btn btn-primary" ng-csv="equip" filename="equipLog.csv" csv-header="Object.keys(equip[0])">
+            <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade in" id="tktTab">
+      <div id="tkt-wrapper" class="col-xs-12">
+        <h5 ng-show="!tickets" class="clear"> No tickets for this date on {{selection}}</h5>
+        <h5 ng-show="tickets">Tickets on {{selectionType}} {{selection}}</h5>
+        <uib-pagination class="col-xs-12 pagination-sm" total-items="tickets.length" ng-model="currentPage" items-per-page="5" max-size="5" boundary-links="true" ng-show="tickets.length>5">
+        </uib-pagination>
+        <div class="sideTabList col-xs-12" ng-repeat="t in tickets | startFrom:(currentPage-1)*5 | limitTo:5">
+          <div class="col-xs-3">
+            <!-- Quick and dirty color coding since this will be removed later -->
+            <div class="status-bar" ng-class="{
+				 'nee-green':t.TCKT_STAT_CODE=='complete','fpl-grey':t.TCKT_STAT_CODE=='canceled','bg-yellow':t.TCKT_STAT_CODE=='scAssigned','bg-red':t.TCKT_STAT_CODE=='dispatcherReferred'
+				 }"></div>
+            <strong>Tkt #: </strong><br /><span>{{t.TRBL_TCKT_NUM}}</span>
+          </div>
+          <div class="col-xs-5">
+            <strong>Date: </strong><span>
+              {{t.TCKT_CRTE_DTTM | date:'shortDate'}} <br />
+              <span class="glyphicon glyphicon-time"></span> {{t.TCKT_CRTE_DTTM | date:'shortTime'}}
+            </span>
+          </div>
+          <div class="col-xs-4">
+            <strong>Type: </strong><span>{{t.TCKT_TYPE_CODE}}</span>
+		  </div>
+          <div class="col-xs-9 col-xs-offset-3">
+            <strong>Status:</strong> {{t.TCKT_STAT_CODE}}
+          </div>
+        </div>
+        <hr />
+        <div>
+          <button type="button" class="btn btn-primary" ng-csv="tickets" filename="tickets.csv" csv-header="Object.keys(tickets[0])">
+            <img src="../images/excel_logo_white.svg" height="15" width="15" style="margin-right:2px;" /> CSV
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--<script type="text/javascript">
+
+  $( "#sideTabMenu" ).children( 'li.tab' ).click( function () {
+    if ( $( "#tab-wrapper" ).hasClass( "tabHide" ) ) {
+      $( "#tab-wrapper" ).toggleClass( "tabHide tabShow" );
+      checkTab();
+    }
+    if ( this.id == "vineTabLink" ) {
+      tabsFix( $( "#vineTabLink" ), $( "#chartTab" ) );
+    }
+    if ( this.id == "faultTablink" ) {
+      tabsFix( $( "#faultTablink" ), $( "#faultsTab" ) );
+    }
+    if ( this.id == "elTabLink" ) {
+      tabsFix( $( "#elTabLink" ), $( "#EquipLog" ) );
+    }
+    if ( this.id == "tktTabLink" ) {
+      tabsFix( $( "#tktTabLink" ), $( "#tktTab" ) );
+    }
+  } )
+
+  $( "#tabCollapse" ).click( function () {
+    console.log( "tab clicked" );
+    $( "#tab-wrapper" ).toggleClass( "tabHide tabShow" );
+    $( "#tabClose" ).toggleClass( "show hide" );
+    $( "#tabOpen" ).toggleClass( "show hide" );
+  } )
+
+  function tabsFix( tabLink, tabPane ) {
+    $( "#vineTabLink,#faultTablink, #elTabLink,#tktTabLink " ).removeClass( "active" );
+    $( "#chartTab,#faultsTab,#EquipLog,#tktTab" ).removeClass( "active" );
+    tabLink.addClass( "active" );
+    tabPane.addClass( "active" );
+  }
+</script>-->

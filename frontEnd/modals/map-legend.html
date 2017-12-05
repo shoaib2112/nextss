@@ -1,0 +1,241 @@
+﻿<!-- **Map Key MODAL** -->
+<div class="modal fade" id="keyModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="width: 650px;">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          MAP KEY
+        </h4>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="k">
+          <li class="active"><a href="#gridkey" data-toggle="tab"><span class="glyphicon glyphicon-dashboard"> </span>&nbsp;Grid</a></li>
+          <li><a href="#FaultsKey" data-toggle="tab"><span class="glyphicon glyphicon-alert"> </span>&nbsp;Faults</a></li>
+          <li><a href="#vineskey" data-toggle="tab"><span class="glyphicon glyphicon-tree-deciduous"> </span>&nbsp;Vegetation</a></li>
+          <li><a href="#LitKey" data-toggle="tab"><span class="glyphicon glyphicon-flash"> </span> &nbsp;Lightning</a></li>
+          <li><a href="#misckey" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> &nbsp;Other Icons</a></li>
+
+        </ul>
+        <div class="tab-content" id="aboutTabsContent">
+          <div class="tab-pane fade  active in" id="gridkey">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Grid devices</div>
+              <div class="panel-body">
+                <ul class="list-group col-xs-6">
+                  <li class="list-group-item">
+                    <div class="di-feeder-head legendIcon">F</div>
+                    Feeder Head
+                  </li>
+                  <!--<li class="list-group-item">-->
+                    <!--<img src="../images/icon_xfrmr.png" class="legendIcon" />-->
+                    <!--Transformer-->
+                  <!--</li>-->
+                  <!--			  <li class="list-group-item">
+                        <img src="../images/icon_xfrmr_ug.png" class="legendIcon" />
+                        Underground Transformer
+                      </li>-->
+                  <li class="list-group-item"><img src="../images/icon_fuse.png" class="legendIcon" />Fuse</li>
+                  <li class="list-group-item">
+                    <div class="clear"><img src="../images/icon_switch-open.png" class="legendIcon" /> Open Switch </div>
+                    <div class="clear"><img src="../images/icon_switch-closed.png" class="legendIcon" /> Closed Switch</div>
+                  </li>
+                  <li class="list-group-item"><img src="../images/icon_other-device.png" class="legendIcon" />Other Device</li>
+
+  			      <!--<li class="list-group-item"><div class="di-meter-primary legendIcon">M</div> Primary Meter</li>-->
+                  <!--<li class="list-group-item"><div class="di-box legendIcon">SW</div> Switch Cabinet</li>-->
+                  <!--<li class="list-group-item"><div class="di-box legendIcon">TS</div> Transfer Switch</li>-->
+                  <!--<li class="list-group-item"><div class="di-box legendIcon">VLT</div> Vault</li>-->
+                </ul>
+                <ul class="list-group col-xs-6">
+                  <li class="list-group-item"><img src="../images/icon_afs-scadamate.svg" class="legendIcon"/> AFS: Scadamate</li>
+                  <li class="list-group-item"><img src="../images/icon_afs-intellirupter.svg" class="legendIcon"/> AFS: Intellirupter</li>
+                  <li class="list-group-item"><img src="../images/icon_fci.svg" class="legendIcon"/> FCI</li>
+                  <!--<li class="list-group-item">
+
+    <li class="list-group-item">
+      <div class="clear">
+        <div class="legendIcon di-open">ER</div> Electronic Recloser: open
+      </div>
+      <div class="clear">
+        <div class="legendIcon di-closed">ER</div> Electronic Recloser: closed
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="legendIcon di-orange">R1</div> Recloser OCR 1
+    </li>
+    <li class="list-group-item">
+      <div class="legendIcon di-orange">R3</div> Recloser OCR 3
+    </li>
+    <li class="list-group-item">
+      <div class="legendIcon di-orange">TS</div> Tripsaver
+    </li>
+        -->
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="FaultsKey">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Faults</div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <img src="../images/icon-alert.png" class="legendIcon" />
+                  Known Fault/momentary location
+                </li>
+                <li class="list-group-item">
+                  <div class="dot bg-yellow"></div>
+                  Likelihood Low
+                </li>
+                <li class="list-group-item">
+                  <div class="dot bg-orange"></div>
+                  Likelihood Medium
+                </li>
+                <li class="list-group-item">
+                  <div class="dot bg-red"></div>
+                  Likelihood High
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="vineskey">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Vegetation</div>
+              <ul class="list-group">
+                <li class="list-group-item"><img src="../images/icon-palm.png" />Palm</li>
+                <li class="list-group-item"><img src="../images/icon_bamboo.png" />Bamboo</li>
+                <li class="list-group-item">
+                  <!--<div class="dot" style="background-color:blue;"></div>-->
+                  <div class="di-vines vines-blue legendIcon" ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  New Ticket
+                </li>
+                <li class="list-group-item">
+                  <!--<div class="dot bg-orange"></div>-->
+                  <div class="di-vines vines-orange legendIcon" ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  Ticket is over 15 days Old
+                </li>
+                <li class="list-group-item">
+                  <!--<div class="dot bg-red"></div>-->
+                  <div class="di-vines vines-red legendIcon " ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  Ticket is over 30 days Old
+                </li>
+                <li class="list-group-item">
+                  <!--<div class="dot nee-green"></div>-->
+                  <div class="di-vines vines-green legendIcon" ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  Sprayed or Ticket Complete
+                </li>
+                <li class="list-group-item">
+                  <!--<div class="dot grey"></div>-->
+                  <div class="di-vines vines-grey legendIcon" ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  Held
+                </li>
+                <li class="list-group-item">
+                  <!--<div class="dot bg-yellow" style="background-color:yellow;"></div>-->
+                  <div class="di-vines vines-yellow legendIcon" ><span class="glyphicon glyphicon-leaf" style="top:-1px;"></span></div>
+                  Ticketed
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="LitKey">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Lightning</div>
+              <div class="panel-body">
+                <!--<p>Content about lighting data</p>-->
+                <h4>Single Day</h4>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <!--<div class="dot" style="background-color:purple;"></div>-->
+                    <img src="../images/icon-lightning.png" height="20" class="legendIcon" />
+                    Lighting Strike Location
+                  </li>
+                </ul>
+                <h4>YTD Lightning Strike Count</h4>
+                <p>The YTD lightning strikes are displayed as a heat map of strike locations</p>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <div class="heat-key">
+                      <span class="left">Less strikes</span>
+                      <span class="right">More Strikes</span>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="heat-dot legendIcon"></div> When zoomed in, individual strikes will show the full spectrum
+                  </li>
+                <!--<li class="list-group-item">-->
+                  <!--<img src="../images/ico_lit-heat_2.png" class="legendIcon" />-->
+                  <!--Within range of less than 5 Lightning strikes-->
+                <!--</li>-->
+                <!--<li class="list-group-item">-->
+                  <!--<img src="../images/ico_lit-heat_3.png" class="legendIcon" />-->
+                  <!--Within range of 5 -15 Lightning strikes-->
+                <!--</li>-->
+                <!--<li class="list-group-item">-->
+                  <!--<img src="../images/ico_lit-heat_5.png" class="legendIcon" />-->
+                  <!--Within range of more than 15 Lightning strikes-->
+                <!--</li>-->
+              </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Close LitKey -->
+
+          <div class="tab-pane fade" id="misckey">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Misc.</div>
+                <div class="panel-body">
+                  <ul class="list-group col-xs-6">
+                    <li class="list-group-item">
+                      <img src="../images/icon-alert.png" class="legendIcon" />
+                      Known Fault/momentary location
+                    </li>
+                    <li class="list-group-item">
+                      <span class="glyphicon glyphicon-tag legendIcon txt-red"></span>Trouble Ticket
+                    </li>
+                    <li class="list-group-item">
+                      <span class="glyphicon glyphicon-wrench legendIcon" style="color:rgba(96,127,131,1)"></span>Work Order
+                    </li>
+                    <h5>Condition Assessment</h5>
+                    <ul class="list-group">
+                      <li class="list-group-item"><img src="../images/icon_ca0.png" class="legendIcon" style="height:20px;" /> Open CA Score 0 (Lowest severity)</li>
+                      <li class="list-group-item"><img src="../images/icon_ca1.png" class="legendIcon" style="height:20px;" /> Open CA Score 1</li>
+                      <li class="list-group-item"><img src="../images/icon_ca2.png" class="legendIcon" style="height:20px;" /> Open CA Score 2</li>
+                      <li class="list-group-item"><img src="../images/icon_ca3.png" class="legendIcon" style="height:20px;" /> Open CA Score 3</li>
+                      <li class="list-group-item"><img src="../images/icon_ca4.png" class="legendIcon" style="height:20px;" /> Open CA Score 4</li>
+                      <li class="list-group-item"><img src="../images/icon_ca5.png" class="legendIcon" style="height:20px;" /> Open CA Score 5 (highest severity)</li>
+                    </ul>
+                  </ul>
+
+
+                  <div class="col-xs-6">
+                    <h5>Trouble Tickets</h5>
+                    <ul class="list-group">
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt7"></span><span class="glyph-label tckt7">FDR</span></div>Interruption Type: Feeder </li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt6"></span><span class="glyph-label tckt6">OCR</span></div>Interruption Type: OCR    </li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt5"></span><span class="glyph-label tckt5">LAT</span></div>Interruption Type: Lateral</li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt4"></span><span class="glyph-label tckt4">TX</span> </div>Interruption Type: Transformer</li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt3"></span><span class="glyph-label tckt3">MTR</span></div>Interruption Type: Meter  </li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt3"></span><span class="glyph-label tckt3">SEC</span></div>Interruption Type: SEC    </li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt2"></span><span class="glyph-label tckt2">NLS</span></div>Interruption Type: No Loss of Service</li>
+                      <li class="list-group-item"><div class="glyph"><span class="glyphicon glyphicon-tag txt-tckt2"></span><span class="glyph-label tckt2">SV</span> </div>Interruption Type: SV span    </li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

@@ -1,0 +1,80 @@
+<div class="modal-header">
+		<h3>Vines List for {{selection}}</h3>
+		<div class="row">
+				<!--<div class="col-md-4">
+						<label> Sort By: </label>
+						<select ng-model="vinesSortBy">
+								<option value="aid">ID</option>
+								<option value="from">From</option>
+								<option value="sentDate">Sent Date</option>
+								<option value="from">comments</option>
+								<option value="ticketStatus">Status</option>
+								<option value="ticketDate">Ticket Date</option>
+								<option value="ticketNumber">Ticket #</option>
+						</select>
+				</div>-->
+				<div class="col-md-4">
+						<label> Filter by text: </label>
+						<input type="text" ng-model="vinesTxtFilter" placeholder="Dates as mm-dd-yyyy" />
+				</div>
+				<div class="col-md-4">
+						<!--<label > Filter Status: </label>
+						<select  ng-model="vinesStatFilter">
+								<option value="">--</option>
+								<option value="New">New</option>
+								<option value="Ticketed">Ticketed</option>
+								<option value="Sprayed">Sprayed</option>
+								<option value="Held">Held</option>
+								<option value="Complete">Complete</option>
+						</select>-->
+				</div>
+				
+		</div>
+</div>
+<div id="vineListModal" class="modal-body">
+  <table class="table table-condensed table-striped" style="word-break: break-word;">
+    <thead>
+      <tr>
+        <th class="col-sm-1" ng-click="vinesKey('sub')">		  Substation<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='sub'"> </span>		  <span ng-hide="vinesSort.key!='sub'">			<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet"> </span>	<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet-alt"> </span>		</span></th>
+        <th class="col-sm-1" ng-click="vinesKey('aid')">		  ID		<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='aid'"> </span>		  <span ng-hide="vinesSort.key!='aid'">			<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-order"> </span>		<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-order-alt"> </span>		</span></th>
+        <th class="col-sm-2" ng-click="vinesKey('from')">		  From		<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='from'"> </span>		  <span ng-hide="vinesSort.key!='from'">		<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet"></span>		<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet-alt"></span>			</span></th>
+        <th class="col-sm-1" ng-click="vinesKey('sentDate')">	  Sent		<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='sentDate'"> </span>	  <span ng-hide="vinesSort.key!='sentDate'">	<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes"> </span>	<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes-alt"> </span>		</span></th>
+        <th class="col-sm-3" ng-click="vinesKey('comments')">	  Comments  <span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='comments'"> </span>	  <span ng-hide="vinesSort.key!='comments'">	<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes"> </span>	<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes-alt"> </span>		</span></th>
+        <th class="col-sm-1" ng-click="vinesKey('ticketStatus')"> Status	<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='ticketStatus'"></span><span ng-hide="vinesSort.key!='ticketStatus'"><span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet"></span>		<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-alphabet-alt"></span>			</span></th>
+        <th class="col-sm-1" ng-click="vinesKey('ticketDate')">	  Tkt Date	<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='ticketDate'"> </span> <span ng-hide="vinesSort.key!='ticketDate'">	<span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes"></span>	<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-attributes-alt"></span>		</span></th>
+        <th class="col-sm-1" ng-click="vinesKey('ticketNumber')"> Tkt #		<span class="glyphicon glyphicon-sort" ng-show="vinesSort.key!='ticketNumber'"> </span><span ng-hide="vinesSort.key!='ticketNumber'"><span ng-show="!vinesSort.reverse" class="glyphicon glyphicon-sort-by-order"></span>		<span ng-show="vinesSort.reverse" class="glyphicon glyphicon-sort-by-order-alt"></span>				</span></th>
+        <th class="col-sm-1">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="mod" ng-repeat="vine in vines | orderBy: vinesSort.key : vinesSort.reverse  |
+		  filter: {ticketStatus:vinesStatFilter} | filter:vinesTxtFilter | startFrom:(currentPage-1)*9 | limitTo:9">
+        <td>{{vine.sub}}</td>
+        <td>{{vine.aid}}</td>
+        <td>{{vine.from}}</td>
+        <td>{{vine.sentDate | date}}</td>
+        <td>{{vine.comments}}</td>
+        <td class="txt-center" ng-class="{red: vine.col == 'red',blue: vine.col == 'blue',orange: vine.col == 'orange',yellow: vine.col == 'yellow',green: vine.col == 'green', grey: vine.col == 'grey'}">
+          {{vine.ticketStatus}}
+        </td>
+        <td class="txt-center" ng-class="{red: vine.col == 'red',blue: vine.col == 'blue',orange: vine.col == 'orange',yellow: vine.col == 'yellow',green: vine.col == 'green', grey: vine.col == 'grey'}">
+          {{vine.ticketDate | date}}
+        </td>
+        <td>{{vine.ticketNumber}}</td>
+        <td class="txt-center"><button type="button" class="btn btn-primary btn-sm" ng-click="vineEdit(vine.aid)">Edit</button></td>
+      </tr>
+    </tbody>
+  </table>
+		
+</div>
+<div class="modal-footer row" style="margin: 0;">
+  <div class="col-sm-8">
+    <span class="txt-left left" style="margin-right:15px;"> {{(vines |filter: {ticketStatus:vinesStatFilter} | filter:vinesTxtFilter).length}} results </span>
+    <uib-pagination class="left" total-items="(vines |filter: {ticketStatus:vinesStatFilter} | filter:vinesTxtFilter).length" ng-model="currentPage" items-per-page="9" max-size="8" rotate="false">
+    </uib-pagination>
+  </div>
+  <div class="col-sm-4">
+	<button type="button" class="btn btn-primary" ng-csv="vines" filename="vines.csv" csv-header="['','Id','Comments','Lat','Long','FPL ID','From','Tkt Date','Tkt #','Sent', 'Status', 'Color']">Get CSV</button>
+	<button type="button" class="btn btn-warning" ng-click="vineClose()">Cancel</button>
+  </div>
+</div>

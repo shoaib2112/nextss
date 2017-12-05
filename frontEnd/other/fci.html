@@ -1,0 +1,139 @@
+<html lang="en" ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">        
+<title>FCI Quality Monitor</title> 
+<link rel="stylesheet" href="../assets/libs/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="../css/pdim-style.css">
+<link rel="stylesheet" href="../css/fci.css">
+<script type="text/javascript" src="../assets/libs/jquery/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="../assets/libs/angular/angular.min.js"></script>
+<script type="text/javascript" src="../assets/libs/angular/angular-animate.min.js"></script>
+<script type="text/javascript" src="../assets/libs/angular/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="../assets/libs/angular/ui-bootstrap-tpls-0.14.3.min.js"></script>
+<script type="text/javascript" src="../assets/libs/angular/ng-csv.min.js"></script>
+<script type="text/javascript" src="../assets/libs/d3/d3.min.js" charset="utf-8"></script>
+<script src="fci.js"></script>
+</head>
+<body>
+<div id="header">
+    <img src="../assets/img/FPL_logo_white.png" width="47" height="40" alt="FPL logo">
+    <h3>Smart Grid Applications</h3>
+    <h5><span id="AppTitle"></span></h5>
+</div>
+<div class="container" ng-controller="indexCtrl">     
+    <h2>FCI Quality Monitor</h2>
+    <p>As of {{when | date}}</p>
+    <div class="links">
+        <h4>Parameter</h4><ul>
+        <li>Out of Scan</li>
+        <li>Power Low</li>
+        <li>Sys Boot Ctr</li>         
+        <li>Battery Life</li>
+        <li>Energy Reserve</li>
+        <li>Radio Status</li>             
+    </ul></div> 
+    <div class="chart" id="alarm"><h4># in Alarm</h4></div>   
+    <div class="chart" id="total"><h4># Reporting</h4></div>
+<div class="divider">Details</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Power Low</h4>
+        <button type="button" ng-csv="pointsPowerLow" filename="powerLow.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+        <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr>        
+        <tr ng-repeat="point in pointsPowerLow">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td>    
+         </tr>
+    </table>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Battery Life</h4>
+        <button type="button" ng-csv="pointsBatteryLife" filename="batteryLife.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+        <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr>         
+        <tr ng-repeat="point in pointsBatteryLife">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td>    
+         </tr>
+    </table>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Energy Reserve</h4>
+        <button type="button" ng-csv="pointsEnergyReserve" filename="energyReserve.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+        <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr>         
+        <tr ng-repeat="point in pointsEnergyReserve">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td>    
+         </tr>
+    </table>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Radio Status</h4>
+        <button type="button" ng-csv="pointsRadioStatus" filename="radioStatus.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+         <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr>        
+        <tr ng-repeat="point in pointsRadioStatus">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td>    
+         </tr>
+    </table>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Sys Boot</h4>
+        <button type="button" ng-csv="pointsSysBoot" filename="sysBoot.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+        <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr>         
+        <tr ng-repeat="point in pointsSysBoot">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td> 
+         </tr>
+    </table>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-2">
+    <h4>Out of Scan</h4>
+    <button type="button" ng-csv="pointsOutOfScan" filename="outOfScan.csv" csv-header="['Sub','Feeder','FCI','Extended ID']">Excel</button>
+    <table class="tabfci">
+        <tr>           
+            <th class="tdx">Sub</th>
+            <th class="tdx">Feeder</th>
+            <th class="tdx">FCI</th>              
+         </tr> 
+        <tr ng-repeat="point in pointsOutOfScan">           
+            <td class="tdx">{{point.sub | limitTo:10}}</td>
+            <td class="tdx">{{point.feeder}}</td>
+            <td class="tdx">{{point.fci}}</td>                      
+         </tr>
+    </table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<span class="areaSelectionBank">
+
+    <span class="form-group" >
+        <select class="form-control" name="managementAreaList" id="managementAreaList"
+                ng-model="areaFData.selectedManagementArea"
+                ng-options="option as option._id for option in managementAreas | toArray | orderBy: '_id'"
+                ng-change="managementAreaSelected()">
+            <option value="">MA</option>
+        </select>
+    </span>
+
+    <span class="form-group">
+        <select class="form-control" name="serviceCenterList" id="serviceCenterList"
+                ng-options="option._id for option in areaFData.serviceCentersList | toArray | orderBy: '_id'"
+                ng-model="areaFData.selectedServiceCenter"
+                ng-change="serviceCenterSelected()">
+            <option value="">SVC</option>
+        </select>
+    </span>
+
+
+    <span class="form-group" style="width:150px">
+        <select class="form-control" name="substationListing" id="substationListing"
+            ng-options="option._id for option in areaFData.substationsList | toArray | orderBy: '_id'"
+            ng-model="areaFData.selectedSubstation" ng-change="substationSelected()">
+            <option value="">Substation</option>
+        </select>
+    </span>
+
+    <!--<span class="form-group" style="width:150px">-->
+        <!--<select class="form-control" name="substationListing" id="substationListingDemo"-->
+                <!--ng-options="option._id for option in areaFData.substationsList | toArray | orderBy: '_id'"-->
+                <!--ng-model="areaFData.selectedSubstation" ng-change="substationSelectedVerticeGrid()">-->
+            <!--<option value="">TESTING Sub</option>-->
+        <!--</select>-->
+    <!--</span>-->
+
+    <div class="form-group">
+        <select   class="form-control" name="feederListing" id="feederListing" ng-disabled="!areaFData.selectedSubstation"
+                  ng-options="option.name for option in areaFData.selectedSubstation.feeders | toArray | orderBy: 'name'"
+                  ng-model="areaFData.selectedFeeder" ng-change="feederSelected()">
+            <option value="">Feeder</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <span style="display:inline-block; float:left; margin: 10px 5px 0" >From:</span>
+        <p class="input-group">
+            <input ng-click="isCalendarOpen = !isCalendarOpen" placeholder="MM-DD-YYYY" ng-disabled="areaFData.selectedManagementArea === managementAreas.all"
+                   type="text" class="form-control" uib-datepicker-popup="MM-dd-yyyy"
+                   ng-model="areaFData.selectedCalendarDate" is-open="isCalendarOpen" datepicker-options="areaFData.dateOptions" ng-required="true"
+                   close-text="Close" alt-input-formats="altInputFormats" ng-change="calendarDaySelected();setStartDateTime()"/>
+            <span class="input-group-btn">
+                <button ng-disabled="areaFData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default"
+                        ng-click="isCalendarOpen = !isCalendarOpen"
+                        data-toggle="tooltip" data-placement="bottom" title="Start Date">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+             </span>
+        </p>
+    </div>
+
+    <div class="form-group">
+        <span style="display:inline-block; float:left; margin: 10px 5px 0" >To:</span>
+        <p class="input-group">
+            <input ng-click="isCalendarEndOpen = !isCalendarEndOpen" placeholder="MM-DD-YYYY" ng-disabled="areaFData.selectedManagementArea === managementAreas.all"
+                   type="text" class="form-control"  uib-datepicker-popup="MM-dd-yyyy" popup-placement="bottom-right"
+                   ng-model="areaFData.selectedCalendarEndDate" is-open="isCalendarEndOpen" datepicker-options="areaFData.dateOptions"
+                   close-text="Close" alt-input-formats="altInputFormats" ng-change="calendarDaySelected();setEndDateTime()" />
+            <span class="input-group-btn">
+                <button ng-disabled="areaFData.selectedManagementArea === managementAreas.all" type="button" class="btn btn-default"
+                         ng-click="isCalendarEndOpen = !isCalendarEndOpen"
+                        data-toggle="tooltip" data-placement="bottom" title="End Date">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+
+    </div>
+
+</span>

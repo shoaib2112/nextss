@@ -1,0 +1,21 @@
+<h2>List Users</h2>
+<table class="tabpdc">
+  <tr>
+    <th>Name</th>
+    <th>SLID</th>
+    <th>Area</th>
+    <th>Role</th>
+    <th>Actions</th>
+  </tr>
+  <tr ng-repeat="user in users">
+    <td>{{user.fname}} {{user.lname}}</td>
+    <td>{{user.slid}}</td>
+    <td>{{user.ma}}</td>
+    <td>{{user.role}}</td>
+    <td>
+      <a class="btn btn-primary" ui-sref="editUser({id:user._id})">Edit</a>
+      <a class="btn btn-danger"  ng-click="deleteUser(user)">Delete</a>
+    </td>
+  </tr>
+</table>
+    <a ui-sref="newUser" class="btn-primary btn-lg nodecoration">Add New User</a>

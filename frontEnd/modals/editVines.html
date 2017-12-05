@@ -1,0 +1,31 @@
+<div class="modal-header">
+    <h3>Vines Report</h3>
+</div>
+<div class="modal-body">
+    <form novalidate name="vinesForm" class="row">
+		<div class="col-sm-6">
+			<img ng-src="http://dpdcapps-services/ImageViewer/View.ashx?width=250&height=250&id={{vine.binaryDataId}}" alt="Vines image"><br><br>
+		</div>
+		<div class="col-sm-6">
+			<label>ID:</label>{{vine.aid}}<br>
+			<label>From:</label>{{vine.from}}<br>
+			<label>Sent:</label>{{vine.sentDate | date}}<br>
+			<label>FPL ID:</label>{{vine.fplid}}<br>
+			<label>DDB:</label>{{vine.ddb}}<br>
+			<label>Sub/Fdr/M/S:</label>{{vine.substationId}} {{vine.feederNumber}} {{vine.managementAreaId}} {{vine.ServiceCenterId}}<br>
+			<label>Location:</label>{{latX | number:3}}: {{latY | number:3}}<br>
+			<label>Ticket Status:</label>{{vine.ticketStatus}}<br>
+			<label for="ticketNumber">Ticket #:</label><input type="text" id="ticketNumber" name="ticketNumber" placeholder="999999" ng-model="vine.ticketNumber" required><br>
+			<label for="ticketDate">Ticket Date:</label><input type="date" id="ticketDate" name="ticketDate" placeholder="yyyy-MM-dd" ng-model="vine.ticketDate" required><br>
+			<label for="comments">Comments:</label><input type="text" id="comments" name="comments" ng-model="vine.comments"><br>
+		</div>
+    </form>
+</div>
+<div class="modal-footer">
+  <!-- AJHEdit start remove spray button -->
+    <!--<button type="button" class="btn btn-primary" ng-disabled="vine.disabled" ng-click="vineAction('Sprayed')">Sprayed</button>-->
+  <!-- AJHEdit END -->
+    <button type="button" class="btn btn-primary" ng-disabled="vinesForm.$invalid || vine.disabled" ng-click="vineAction('Ticketed')">Ticket</button>
+    <button type="button" class="btn btn-primary" ng-disabled="vine.disabled" ng-click="vineAction('Held')">Hold</button>
+    <button type="button" class="btn btn-warning" ng-click="vineClose()">Cancel</button>
+</div>
